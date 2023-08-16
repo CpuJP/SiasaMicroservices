@@ -21,11 +21,13 @@ public class CodigoU {
     @Column(nullable = false, length = 50)
     private String primerNombre;
 
+    @Column(length = 50)
     private String segundoNombre;
 
     @Column(nullable = false, length = 50)
     private String primerApellido;
 
+    @Column(length = 50)
     private String segundoApellido;
 
 
