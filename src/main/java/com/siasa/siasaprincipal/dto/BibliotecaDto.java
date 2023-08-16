@@ -10,8 +10,10 @@ import java.time.LocalDateTime;
 @Data
 public class BibliotecaDto implements Serializable {
     private Integer idBiblioteca;
+
     @NotNull
     private LocalDateTime fechaIngreso;
+
     @NotNull
     private CodigoU codigo;
 }

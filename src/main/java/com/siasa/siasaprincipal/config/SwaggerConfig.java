@@ -10,6 +10,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class SwaggerConfig {
 
+    //Se crea el Bean de configuracion de Swwagger Open API, para dar informacion relevante sobre las API's
     @Bean
     public OpenAPI springShopOpenAPI() {
         return new OpenAPI()

@@ -26,6 +26,7 @@ public class SalaComputo {
     @Column(nullable = false, length = 10)
     private String salaIngreso;
 
+    //Se crea la relacion 1:1 entre las entidades salaComputo y codigoU
     @OneToOne(cascade = CascadeType.ALL, optional = false)
     private CodigoU codigoU;
 }

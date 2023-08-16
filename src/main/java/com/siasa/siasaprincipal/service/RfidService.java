@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.List;
 
+//Se crea una interface para abstraccion de los metodos a usar con los repositorio
 public interface RfidService {
 
     ResponseEntity<List<RfidDto>> findAll();

@@ -17,6 +17,7 @@ import java.util.stream.Collectors;
 @Service(value = "rfidService")
 public class RfidServiceImpl implements RfidService{
 
+    //Se inyectan los Beans necesarios
     private final RfidRepository rfidRepository;
 
     private final ModelMapper modelMapper;
@@ -27,15 +28,18 @@ public class RfidServiceImpl implements RfidService{
     }
 
 
+    //Se crea la logica de negocio implementando la interface para abstraer la logica de la exposicion de apis
     @Override
     public ResponseEntity<List<RfidDto>> findAll() {
         List<Rfid> rfids = rfidRepository.findAll();
+        //Si la lista no esta vacia se mapea del entity a dto para exponerlo en el endpoint
         if (!rfids.isEmpty()) {
             List<RfidDto> rfidDtos = rfids.stream()
                     .map(rfid -> modelMapper.map(rfid, RfidDto.class))
                     .collect(Collectors.toList());
 
             return new ResponseEntity<>(rfidDtos, HttpStatus.OK);
+        //si la lista esta vacia, se envia un mensaje de excepcion donde se muestra el codigo 204 sin contenido
         } else {
             throw new MessageNotContentException("No hay datos en la tabla Rfid");
         }
@@ -43,8 +47,11 @@ public class RfidServiceImpl implements RfidService{
 
     @Override
     public ResponseEntity<RfidDto> findById(String id) {
+        //Se toma el id obtenido por la api y se envia al repositorio para que lo busque en la BD
         Optional<Rfid> rfids = Optional.ofNullable(rfidRepository.findById(id)
+                //si el id no existe se envia un mensaje de excepcion 404 de no encontrado
                 .orElseThrow(() -> new MessageNotFoundException(String.format("El Rfid con id %s no existe",id))));
+        //si se encuentra el id, se envia al body la informacion de la entidad mapeada en el dto
         if (rfids.isPresent()) {
             return ResponseEntity.ok(modelMapper.map(rfids.get(), RfidDto.class));
         } else {

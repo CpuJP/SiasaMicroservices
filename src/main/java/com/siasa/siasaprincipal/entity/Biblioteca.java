@@ -20,6 +20,7 @@ public class Biblioteca {
     @Column(nullable = false, columnDefinition = "TIMESTAMP")
     private LocalDateTime fechaIngreso;
 
+    //Se crea la relacion 1:1 entre las entidades biblioteca y codigoU
     @OneToOne(cascade = CascadeType.ALL, optional = false)
     private CodigoU codigoU;
 

@@ -31,6 +31,7 @@ public class Prestamos {
     @Column(nullable = false)
     private OrigenPrestamo origenPrestamo;
 
+    //Se crea la relacion 1:M entre las entidades prestamos y codigoU
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "codigo_u_id_codigo_u")
     private CodigoU codigoU;

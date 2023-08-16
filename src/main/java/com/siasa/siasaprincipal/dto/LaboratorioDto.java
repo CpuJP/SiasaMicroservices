@@ -10,7 +10,9 @@ import java.time.LocalDateTime;
 @Data
 public class LaboratorioDto implements Serializable {
     private Integer idLaboratorio;
+
     private LocalDateTime fechaIngreso;
+
     private LocalDateTime fechaSalida;
 
     @NotNull

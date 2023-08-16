@@ -20,6 +20,7 @@ public class Campus {
     @Column(nullable = false, columnDefinition = "TIMESTAMP")
     private LocalDateTime fechaIngreso;
 
+    //Se crea la relacion 1:1 entre las entidades campus y codigoU
     @OneToOne(cascade = CascadeType.ALL, optional = false)
     private CodigoU codigoU;
 

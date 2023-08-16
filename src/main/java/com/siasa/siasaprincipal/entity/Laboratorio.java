@@ -23,6 +23,7 @@ public class Laboratorio {
     @Column(nullable = true, columnDefinition = "TIMESTAMP")
     private LocalDateTime fechaSalida;
 
+    //Se crea la relacion 1:1 entre las entidades laboratorio y codigoU
     @OneToOne(cascade = CascadeType.ALL, optional = false)
     private CodigoU codigoU;
 }
