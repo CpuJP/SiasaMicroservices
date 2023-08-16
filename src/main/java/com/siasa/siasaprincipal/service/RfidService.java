@@ -1,12 +1,21 @@
 package com.siasa.siasaprincipal.service;
 
 import com.siasa.siasaprincipal.dto.RfidDto;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.List;
 
 public interface RfidService {
 
-    List<RfidDto> findAll();
+    ResponseEntity<List<RfidDto>> findAll();
 
+    ResponseEntity<RfidDto> findById(@PathVariable String id);
 
+    ResponseEntity<RfidDto> create(@RequestBody RfidDto rfidDto);
+
+    ResponseEntity<RfidDto> update(@RequestBody RfidDto rfidDto);
+
+    ResponseEntity<RfidDto> delete(@PathVariable String id);
 }

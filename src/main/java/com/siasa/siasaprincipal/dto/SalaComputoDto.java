@@ -1,14 +1,23 @@
 package com.siasa.siasaprincipal.dto;
 
 import com.siasa.siasaprincipal.entity.CodigoU;
+import jakarta.validation.constraints.NotNull;
+import lombok.Data;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
-public record SalaComputoDto(
-        Integer idSalaComputo,
-        LocalDateTime fechaIngreso,
-        LocalDateTime fechaSalida,
-        String salaIngreso,
-        CodigoU codigoU
-) {
+@Data
+public class SalaComputoDto implements Serializable {
+    private Integer idSalaComputo;
+
+    private LocalDateTime fechaIngreso;
+
+    private LocalDateTime fechaSalida;
+
+    @NotNull
+    private String salaIngreso;
+
+    @NotNull
+    private CodigoU codigoU;
 }
