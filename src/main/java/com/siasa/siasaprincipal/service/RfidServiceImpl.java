@@ -5,6 +5,7 @@ import com.siasa.siasaprincipal.entity.Rfid;
 import com.siasa.siasaprincipal.exception.MessageNotContentException;
 import com.siasa.siasaprincipal.exception.MessageNotFoundException;
 import com.siasa.siasaprincipal.repository.RfidRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,6 +15,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service(value = "rfidService")
 public class RfidServiceImpl implements RfidService{
 
@@ -41,6 +43,7 @@ public class RfidServiceImpl implements RfidService{
             return new ResponseEntity<>(rfidDtos, HttpStatus.OK);
         //si la lista esta vacia, se envia un mensaje de excepcion donde se muestra el codigo 204 sin contenido
         } else {
+            log.warn("No hay datos en la tabla Rfid");
             throw new MessageNotContentException("No hay datos en la tabla Rfid");
         }
     }
@@ -55,6 +58,7 @@ public class RfidServiceImpl implements RfidService{
         if (rfids.isPresent()) {
             return ResponseEntity.ok(modelMapper.map(rfids.get(), RfidDto.class));
         } else {
+            log.warn(String.format("El Rfid con el id %s no existe", id));
             throw new MessageNotFoundException(String.format("El Rfid con id %s no existe",id));
         }
     }
