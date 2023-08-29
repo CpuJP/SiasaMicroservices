@@ -2,6 +2,8 @@ package com.siasa.siasaprincipal.service;
 
 import com.siasa.siasaprincipal.dto.RfidDto;
 import com.siasa.siasaprincipal.entity.Rfid;
+import com.siasa.siasaprincipal.exception.MessageBadRequestException;
+import com.siasa.siasaprincipal.exception.MessageConflictException;
 import com.siasa.siasaprincipal.exception.MessageNotContentException;
 import com.siasa.siasaprincipal.exception.MessageNotFoundException;
 import com.siasa.siasaprincipal.repository.RfidRepository;
@@ -10,7 +12,9 @@ import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.net.URI;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -65,16 +69,36 @@ public class RfidServiceImpl implements RfidService{
 
     @Override
     public ResponseEntity<RfidDto> create(RfidDto rfidDto) {
-        return null;
+        if (rfidDto.getIdRfid().isEmpty()) {
+            log.warn("El campo del código del carnet es obligatorio");
+            throw new MessageBadRequestException("El campo del código del carnet es obligatorio");
+        }
+        if (rfidRepository.existsById(rfidDto.getIdRfid())) {
+            log.warn(String.format("El carnet con código %s ya se encuentra registrado", rfidDto.getIdRfid()));
+            throw new MessageConflictException(String.format("El carnet con código %s ya se encuentra registrado", rfidDto.getIdRfid()));
+        } else {
+            Rfid rfid = modelMapper.map(rfidDto, Rfid.class);
+            Rfid saveRfid = rfidRepository.save(rfid);
+
+            // Construir la URL del nuevo recurso creado
+            URI location = ServletUriComponentsBuilder
+                    .fromCurrentRequest()
+                    .path("/{id}")
+                    .buildAndExpand(saveRfid.getIdRfid())
+                    .toUri();
+            log.info("Rfid creado exitosamente");
+            return ResponseEntity.created(location).body(modelMapper.map(saveRfid, RfidDto.class));
+        }
     }
 
     @Override
-    public ResponseEntity<RfidDto> update(RfidDto rfidDto) {
-        return null;
-    }
-
-    @Override
-    public ResponseEntity<RfidDto> delete(String id) {
-        return null;
+    public ResponseEntity<Void> delete(String id) {
+        if (!rfidRepository.existsById(id)) {
+            log.warn(String.format("El carnet que se intenta eliminar con código %s no se encuentra registrado", id));
+            throw new MessageNotFoundException(String.format("El carnet que se intenta eliminar con código %s no se encuentra registrado", id));
+        }
+        rfidRepository.deleteById(id);
+        log.info(String.format("EL rfid con código %s se eliminó exitosamente", id));
+        return ResponseEntity.noContent().build();
     }
 }

@@ -11,7 +11,7 @@ public class CodigoUDto implements Serializable {
     private String idCodigoU;
 
     @NotNull
-    private Rfid rfid;
+    private RfidDto rfidDto;
 
     @NotNull
     private String primerNombre;

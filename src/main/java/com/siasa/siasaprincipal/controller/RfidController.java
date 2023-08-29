@@ -33,4 +33,16 @@ public class RfidController {
         return rfidService.findById(id);
     }
 
+    // Se crea el endpoint post principal para la creción de nuevos datos en BD de
+    // la entidad Rfid
+    @PostMapping
+    public ResponseEntity<RfidDto> create(@RequestBody RfidDto rfidDto) {
+        return rfidService.create(rfidDto);
+    }
+
+    // Se crea el endpoint delete para borrar un carnet ya existente en la base de datos.
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable String id) {
+        return rfidService.delete(id);
+    }
 }

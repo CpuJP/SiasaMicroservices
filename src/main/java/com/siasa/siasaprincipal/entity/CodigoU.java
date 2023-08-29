@@ -16,6 +16,7 @@ public class CodigoU {
     private String idCodigoU;
 
     //Se crea la relacion 1:1 entre las entidades codigoU y rfid
+    @Getter
     @OneToOne(cascade = CascadeType.ALL, optional = false)
     private Rfid rfid;
 
