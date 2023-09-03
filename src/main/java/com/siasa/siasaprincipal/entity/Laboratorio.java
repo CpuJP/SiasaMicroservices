@@ -24,6 +24,7 @@ public class Laboratorio {
     private LocalDateTime fechaSalida;
 
     //Se crea la relacion 1:1 entre las entidades laboratorio y codigoU
-    @OneToOne(cascade = CascadeType.ALL, optional = false)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "codigou_id_codigou")
     private CodigoU codigoU;
 }

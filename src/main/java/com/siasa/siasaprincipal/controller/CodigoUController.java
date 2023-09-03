@@ -18,11 +18,9 @@ import java.util.Optional;
 public class CodigoUController {
 
     private final CodigoUService codigoUService;
-    private final CodigoURepository codigoURepository;
 
     public CodigoUController(CodigoUService codigoUService, CodigoURepository codigoURepository) {
         this.codigoUService = codigoUService;
-        this.codigoURepository = codigoURepository;
     }
 
     @Operation(summary = "Get all CodigoU's")

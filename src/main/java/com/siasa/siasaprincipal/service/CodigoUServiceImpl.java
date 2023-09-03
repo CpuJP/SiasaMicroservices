@@ -74,6 +74,9 @@ public class CodigoUServiceImpl implements CodigoUService{
 
     @Override
     public ResponseEntity<CodigoUDto> findByRfid(String idRfid) {
+        if (!rfidRepository.existsById(idRfid)) {
+            throw new MessageBadRequestException(String.format("El carnet con código %s no existe en base de datos", idRfid));
+        }
         Optional<CodigoU> codigoUOptional = Optional.ofNullable(codigoURepository.findByRfidIdRfid(idRfid)
                 .orElseThrow(() -> new MessageNotFoundException(String.format("La persona con código %s no existe", idRfid))));
 
@@ -106,6 +109,10 @@ public class CodigoUServiceImpl implements CodigoUService{
             throw new MessageBadRequestException("El carnet que se intenta asociar no existe");
         } else {
             CodigoU codigoU = modelMapper.map(codigoUDto, CodigoU.class);
+            codigoU.setPrimerNombre(codigoU.getPrimerNombre().toUpperCase().trim());
+            codigoU.setSegundoNombre(codigoU.getSegundoNombre().toUpperCase());
+            codigoU.setPrimerApellido(codigoU.getPrimerApellido().toUpperCase().trim());
+            codigoU.setSegundoApellido(codigoU.getSegundoApellido().toUpperCase().trim());
             CodigoU saveCodigoU = codigoURepository.save(codigoU);
 
             URI location = ServletUriComponentsBuilder
@@ -114,7 +121,10 @@ public class CodigoUServiceImpl implements CodigoUService{
                     .buildAndExpand(saveCodigoU.getIdCodigoU())
                     .toUri();
             log.info("CodigoU creado exitosamente");
-            return ResponseEntity.created(location).body(modelMapper.map(saveCodigoU, CodigoUDto.class));
+            TypeMap<CodigoU, CodigoUDto> typeMap = modelMapper.typeMap(CodigoU.class, CodigoUDto.class);
+            typeMap.addMapping(CodigoU::getRfid, CodigoUDto::setRfidDto);
+            codigoUDto = typeMap.map(codigoU);
+            return ResponseEntity.created(location).body(codigoUDto);
         }
     }
 
@@ -144,6 +154,10 @@ public class CodigoUServiceImpl implements CodigoUService{
         }
 
         try {
+            codigoU.setPrimerNombre(codigoU.getPrimerNombre().toUpperCase().trim());
+            codigoU.setSegundoNombre(codigoU.getSegundoNombre().toUpperCase());
+            codigoU.setPrimerApellido(codigoU.getPrimerApellido().toUpperCase().trim());
+            codigoU.setSegundoApellido(codigoU.getSegundoApellido().toUpperCase().trim());
             codigoURepository.save(codigoU);
             TypeMap<CodigoU, CodigoUDto> typeMap = modelMapper.typeMap(CodigoU.class, CodigoUDto.class);
             typeMap.addMapping(CodigoU::getRfid, CodigoUDto::setRfidDto);
