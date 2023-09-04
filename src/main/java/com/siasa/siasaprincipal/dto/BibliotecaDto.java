@@ -15,5 +15,5 @@ public class BibliotecaDto implements Serializable {
     private LocalDateTime fechaIngreso;
 
     @NotNull
-    private CodigoU codigo;
+    private CodigoUDto codigoUDto;
 }

@@ -1,13 +1,13 @@
 package com.siasa.siasaprincipal.service;
 
-import com.siasa.siasaprincipal.dto.CampusDto;
+import com.siasa.siasaprincipal.dto.BibliotecaDto;
 import com.siasa.siasaprincipal.dto.CodigoUDto;
-import com.siasa.siasaprincipal.entity.Campus;
+import com.siasa.siasaprincipal.entity.Biblioteca;
 import com.siasa.siasaprincipal.entity.CodigoU;
 import com.siasa.siasaprincipal.exception.MessageBadRequestException;
 import com.siasa.siasaprincipal.exception.MessageNotContentException;
 import com.siasa.siasaprincipal.exception.MessageNotFoundException;
-import com.siasa.siasaprincipal.repository.CampusRepository;
+import com.siasa.siasaprincipal.repository.BibliotecaRepository;
 import com.siasa.siasaprincipal.repository.CodigoURepository;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -26,98 +26,97 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-@Service(value = "campusService")
+@Service(value = "bibliotecaService")
 @Slf4j
-public class CampusServiceImpl implements CampusService{
+public class BibliotecaServiceImpl implements BibliotecaService{
 
-    private final CampusRepository campusRepository;
+    private final BibliotecaRepository bibliotecaRepository;
+
     private final ModelMapper modelMapper;
+
     private final CodigoURepository codigoURepository;
 
-    public CampusServiceImpl(CampusRepository campusRepository, ModelMapper modelMapper, CodigoURepository codigoURepository) {
-        this.campusRepository = campusRepository;
+    public BibliotecaServiceImpl(BibliotecaRepository bibliotecaRepository, ModelMapper modelMapper, CodigoURepository codigoURepository) {
+        this.bibliotecaRepository = bibliotecaRepository;
         this.modelMapper = modelMapper;
         this.codigoURepository = codigoURepository;
-
     }
 
-    private CampusDto mapToDto(Campus campus) {
+    private BibliotecaDto matToDto(Biblioteca biblioteca) {
         TypeMap<CodigoU, CodigoUDto> typeMap = modelMapper.typeMap(CodigoU.class, CodigoUDto.class);
         typeMap.addMapping(CodigoU::getRfid, CodigoUDto::setRfidDto);
-        TypeMap<Campus, CampusDto> typeMap1 = modelMapper.typeMap(Campus.class, CampusDto.class);
-        typeMap1.addMapping(Campus::getCodigoU, CampusDto::setCodigoUDto);
-        return typeMap1.map(campus);
+        TypeMap<Biblioteca, BibliotecaDto> typeMap1 = modelMapper.typeMap(Biblioteca.class, BibliotecaDto.class);
+        typeMap1.addMapping(Biblioteca::getCodigoU, BibliotecaDto::setCodigoUDto);
+        return typeMap1.map(biblioteca);
     }
 
     @Override
-    public ResponseEntity<List<CampusDto>> findAll() {
-        List<Campus> campusList = campusRepository.findAll();
-        if (!campusList.isEmpty()) {
-            List<CampusDto> campusDtos = campusList.stream()
-                    .map(this::mapToDto)
+    public ResponseEntity<List<BibliotecaDto>> findAll() {
+        List<Biblioteca> bibliotecas = bibliotecaRepository.findAll();
+        if (!bibliotecas.isEmpty()) {
+            List<BibliotecaDto> bibliotecaDtos = bibliotecas.stream()
+                    .map(this::matToDto)
                     .collect(Collectors.toList());
-            return new ResponseEntity<>(campusDtos, HttpStatus.OK);
+            return new ResponseEntity<>(bibliotecaDtos, HttpStatus.OK);
         } else {
-            // Manejo de caso en el que no hay datos en la tabla Campus
-            log.warn("No hay datos en la tabla Campus");
-            throw new MessageNotContentException("No hay datos en la tabla Campus");
+            log.warn("No hay datos en la tabla biblioteca");
+            throw new MessageNotContentException("No hay datos en la tabla biblioteca");
         }
     }
 
     @Override
-    public ResponseEntity<Page<CampusDto>> findAllP(int pageNumber, int pageSize) {
+    public ResponseEntity<Page<BibliotecaDto>> findAllP(int pageNumber, int pageSize) {
         Pageable pageable = PageRequest.of(pageNumber, pageSize);
-        Page<Campus> campusPage = campusRepository.findAll(pageable);
-        if (campusPage.hasContent()) {
-            Page<CampusDto> campusDtoPage = campusPage.map(this::mapToDto);
-            return new ResponseEntity<>(campusDtoPage, HttpStatus.OK);
+        Page<Biblioteca> bibliotecaPage = bibliotecaRepository.findAll(pageable);
+        if (bibliotecaPage.hasContent()) {
+            Page<BibliotecaDto> bibliotecaDtoPage = bibliotecaPage.map(this::matToDto);
+            return new ResponseEntity<>(bibliotecaDtoPage, HttpStatus.OK);
         } else {
-            // Manejo de caso en el que no hay datos en la tabla Campus
-            log.warn("No hay datos en la tabla Campus");
-            throw new MessageNotContentException("No hay datos en la tabla Campus");
+            log.warn("No hay datos en la tabla campus");
+            throw new MessageNotContentException("No hay datos en la tabla campus");
         }
-
     }
 
     @Override
-    public ResponseEntity<List<CampusDto>> findByCodigoUIdCodigoU(String idCodigoU) {
+    public ResponseEntity<List<BibliotecaDto>> findByCodigoUIdCodigoU(String idCodigoU) {
         if (!codigoURepository.existsById(idCodigoU)) {
             throw new MessageBadRequestException(String.format("La persona con el código %s no existe en base de datos", idCodigoU));
         }
-        List<Campus> campusList = campusRepository.findByCodigoUIdCodigoU(idCodigoU);
-        if (!campusList.isEmpty()) {
-            List<CampusDto> campusDtos = campusList.stream()
-                    .map(this::mapToDto)
+        List<Biblioteca> bibliotecas = bibliotecaRepository.findByCodigoUIdCodigoU(idCodigoU);
+        if (!bibliotecas.isEmpty()) {
+            List<BibliotecaDto> bibliotecaDtos = bibliotecas.stream()
+                    .map(this::matToDto)
                     .collect(Collectors.toList());
-            return new ResponseEntity<>(campusDtos, HttpStatus.OK);
+            return new ResponseEntity<>(bibliotecaDtos, HttpStatus.OK);
         } else {
-            log.warn(String.format("La persona con código %s no registra en ingreso al campus", idCodigoU));
-            throw new MessageNotFoundException(String.format("La persona con código %s no registra en ingreso al campus", idCodigoU));
+            log.warn(String.format("La persona con el código %s no existe en base de datos", idCodigoU));
+            throw new MessageNotFoundException(String.format("La persona con el código %s no existe en base de datos", idCodigoU));
         }
     }
 
     @Override
-    public ResponseEntity<CampusDto> create(String idRfid) {
+    public ResponseEntity<BibliotecaDto> create(String idRfid) {
         Optional<CodigoU> codigoUOptional = Optional.ofNullable(codigoURepository.findByRfidIdRfid(idRfid)
                 .orElseThrow(() -> new MessageNotFoundException(String.format("El carnet %s no registra en base de datos", idRfid))));
         if (codigoUOptional.isPresent()) {
             LocalDateTime fechaActual = LocalDateTime.now();
             CodigoU codigoU = codigoUOptional.get();
-            Campus campus = Campus.builder()
+            Biblioteca biblioteca = Biblioteca.builder()
                     .codigoU(codigoU)
                     .fechaIngreso(fechaActual)
                     .build();
-            campusRepository.save(campus);
+            bibliotecaRepository.save(biblioteca);
 
             URI location = ServletUriComponentsBuilder
                     .fromCurrentRequest()
                     .path("/{id}")
-                    .buildAndExpand(campus.getIdCampus())
+                    .buildAndExpand(biblioteca.getIdBiblioteca())
                     .toUri();
-            log.info("Registro de ingreso a Campus creado existosamente");
 
-            CampusDto campusDto = mapToDto(campus);
-            return ResponseEntity.created(location).body(campusDto);
+            log.info("Registro de ingreso a Biblioteca creado exitosamente");
+
+            BibliotecaDto bibliotecaDto = matToDto(biblioteca);
+            return ResponseEntity.created(location).body(bibliotecaDto);
         } else {
             log.warn(String.format("El carnet %s no registra en base de datos", idRfid));
             throw new MessageNotFoundException(String.format("El carnet %s no registra en base de datos", idRfid));
@@ -129,9 +128,8 @@ public class CampusServiceImpl implements CampusService{
         if (!codigoURepository.existsById(idCodigoU)) {
             throw new MessageBadRequestException(String.format("La persona con el código %s no existe en base de datos", idCodigoU));
         }
-        if (campusRepository.existsByCodigoUIdCodigoU(idCodigoU)) {
+        if (bibliotecaRepository.existsByCodigoUIdCodigoU(idCodigoU)) {
             return ResponseEntity.ok(String.format("La persona con código %s si registra ingresos al campus", idCodigoU));
-
         } else {
             throw new MessageBadRequestException(String.format("La persona con código %s NO registra ingresos al campus", idCodigoU));
         }

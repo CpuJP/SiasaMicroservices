@@ -59,7 +59,6 @@ public class CodigoUServiceImpl implements CodigoUService{
     public ResponseEntity<CodigoUDto> findById(String id) {
         Optional<CodigoU> codigoUOptional = Optional.ofNullable(codigoURepository.findById(id)
                 .orElseThrow(() -> new MessageNotFoundException(String.format("La persona con código %s no existe", id))));
-
         if (codigoUOptional.isPresent()) {
             CodigoU codigoU = codigoUOptional.get();
             TypeMap<CodigoU, CodigoUDto> typeMap = modelMapper.typeMap(CodigoU.class, CodigoUDto.class);

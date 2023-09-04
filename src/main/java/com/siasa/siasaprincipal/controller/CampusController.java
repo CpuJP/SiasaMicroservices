@@ -40,7 +40,7 @@ public class CampusController {
 
     @Operation(summary = "Get if there is entrance to the campus")
     @GetMapping("/exists/{idCodigoU}")
-    public ResponseEntity<String> existsByCodigo(@PathVariable String idCodigoU) {
+    public ResponseEntity<String> existsByCodigoU(@PathVariable String idCodigoU) {
         return campusService.existsByCodigoUIdCodigoU(idCodigoU);
     }
 
