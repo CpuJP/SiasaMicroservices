@@ -9,4 +9,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 @EnableJpaRepositories
 public interface RfidRepository extends JpaRepository<Rfid, String>, JpaSpecificationExecutor<Rfid> {
+
+
 }

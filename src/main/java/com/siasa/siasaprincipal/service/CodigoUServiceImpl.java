@@ -7,8 +7,7 @@ import com.siasa.siasaprincipal.exception.MessageBadRequestException;
 import com.siasa.siasaprincipal.exception.MessageConflictException;
 import com.siasa.siasaprincipal.exception.MessageNotContentException;
 import com.siasa.siasaprincipal.exception.MessageNotFoundException;
-import com.siasa.siasaprincipal.repository.CodigoURepository;
-import com.siasa.siasaprincipal.repository.RfidRepository;
+import com.siasa.siasaprincipal.repository.*;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeMap;
@@ -27,14 +26,21 @@ import java.util.stream.Collectors;
 public class CodigoUServiceImpl implements CodigoUService{
 
     private final CodigoURepository codigoURepository;
-
     private final RfidRepository rfidRepository;
     private final ModelMapper modelMapper;
+    private final BibliotecaRepository bibliotecaRepository;
+    private final CampusRepository campusRepository;
+    private final LaboratorioRepository laboratorioRepository;
+    private final SalaComputoRepository salaComputoRepository;
 
-    public CodigoUServiceImpl(CodigoURepository codigoURepository, RfidRepository rfidRepository, ModelMapper modelMapper) {
+    public CodigoUServiceImpl(CodigoURepository codigoURepository, RfidRepository rfidRepository, ModelMapper modelMapper, BibliotecaRepository bibliotecaRepository, CampusRepository campusRepository, LaboratorioRepository laboratorioRepository, SalaComputoRepository salaComputoRepository) {
         this.codigoURepository = codigoURepository;
         this.rfidRepository = rfidRepository;
         this.modelMapper = modelMapper;
+        this.bibliotecaRepository = bibliotecaRepository;
+        this.campusRepository = campusRepository;
+        this.laboratorioRepository = laboratorioRepository;
+        this.salaComputoRepository = salaComputoRepository;
     }
 
     @Override
@@ -173,8 +179,46 @@ public class CodigoUServiceImpl implements CodigoUService{
     }
 
     @Override
-    public ResponseEntity<Void> delete(String id) {
-        //TODO: cuando estén los demás controladores, venir y borrar en cascada a todas las entiades
-        return null;
+    public ResponseEntity<String> delete(String id) {
+        // Verificar si existen datos antes de eliminarlos
+        boolean borrarBiblioteca = bibliotecaRepository.existsByCodigoUIdCodigoU(id);
+        boolean borrarCampus = campusRepository.existsByCodigoUIdCodigoU(id);
+        boolean borrarLaboratorio = laboratorioRepository.existsByCodigoUIdCodigoU(id);
+        boolean borrarSalaComputo = salaComputoRepository.existsByCodigoUIdCodigoU(id);
+
+        // Si no existe ninguno de los registros, retorna un ResponseEntity con un mensaje
+        if (!borrarBiblioteca && !borrarCampus && !borrarLaboratorio && !borrarSalaComputo) {
+            throw new MessageNotFoundException(String.format("No existen registros vinculados al código %s para eliminar", id));
+        }
+
+        // Eliminar registros de las tablas relacionadas
+        if (borrarBiblioteca) {
+            bibliotecaRepository.deleteAllByCodigoUIdCodigoU(id);
+        }
+        if (borrarCampus) {
+            campusRepository.deleteAllByCodigoUIdCodigoU(id);
+        }
+        if (borrarLaboratorio) {
+            laboratorioRepository.deleteAllByCodigoUIdCodigoU(id);
+        }
+        if (borrarSalaComputo) {
+            salaComputoRepository.deleteAllByCodigoUIdCodigoU(id);
+        }
+
+        // Obtener el ID del RFID
+        CodigoUDto codigoU = findById(id).getBody();
+
+        // Eliminar el registro de CodigoU
+        codigoURepository.deleteById(id);
+
+        if (codigoU != null) {
+            String idRfidC = codigoU.getRfidDto().getIdRfid();
+
+            // Eliminar el registro de RFID
+            rfidRepository.deleteById(idRfidC);
+        }
+
+        // Retornar un ResponseEntity con un mensaje de éxito
+        return new ResponseEntity<>("Registros eliminados con éxito", HttpStatus.OK);
     }
 }

@@ -22,4 +22,7 @@ public interface SalaComputoRepository extends JpaRepository<SalaComputo, Intege
 
     @Transactional(readOnly = true)
     Optional<SalaComputo> findFirstByCodigoUIdCodigoUOrderByFechaIngresoDesc(String idCodigoU);
+
+    @Transactional(readOnly = false)
+    void deleteAllByCodigoUIdCodigoU(String idCodigoU);
 }

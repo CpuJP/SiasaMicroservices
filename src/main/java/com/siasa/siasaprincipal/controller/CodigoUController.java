@@ -1,9 +1,6 @@
 package com.siasa.siasaprincipal.controller;
 
 import com.siasa.siasaprincipal.dto.CodigoUDto;
-import com.siasa.siasaprincipal.entity.CodigoU;
-import com.siasa.siasaprincipal.entity.Rfid;
-import com.siasa.siasaprincipal.exception.MessageNotFoundException;
 import com.siasa.siasaprincipal.repository.CodigoURepository;
 import com.siasa.siasaprincipal.service.CodigoUService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -11,7 +8,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/codigou")
@@ -51,6 +47,11 @@ public class CodigoUController {
     @PatchMapping("/update/{id}")
     public ResponseEntity<CodigoUDto> update(@PathVariable String id, @RequestBody CodigoUDto codigoUDto) {
         return codigoUService.update(id, codigoUDto);
+    }
+
+    @DeleteMapping("{id}")
+    public ResponseEntity<String> deleteAll(@PathVariable String id) {
+        return codigoUService.delete(id);
     }
 }
 

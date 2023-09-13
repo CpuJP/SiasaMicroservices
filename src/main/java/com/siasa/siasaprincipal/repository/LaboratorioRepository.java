@@ -22,4 +22,7 @@ public interface LaboratorioRepository extends JpaRepository<Laboratorio, Intege
 
     @Transactional(readOnly = true)
     Optional<Laboratorio> findFirstByCodigoUIdCodigoUOrderByFechaIngresoDesc(String idCodigoU);
+
+    @Transactional(readOnly = false)
+    void deleteAllByCodigoUIdCodigoU(String idCodigoU);
 }

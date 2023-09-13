@@ -3,6 +3,8 @@ package com.siasa.siasaprincipal.repository;
 import com.siasa.siasaprincipal.entity.Biblioteca;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,4 +20,7 @@ public interface BibliotecaRepository extends JpaRepository<Biblioteca, Integer>
 
     @Transactional(readOnly = true)
     boolean existsByCodigoUIdCodigoU(String idCodigoU);
+
+    @Transactional(readOnly = false)
+    void deleteAllByCodigoUIdCodigoU(String idCodigoU);
 }

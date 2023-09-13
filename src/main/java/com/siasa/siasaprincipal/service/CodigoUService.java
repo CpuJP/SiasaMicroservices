@@ -1,7 +1,6 @@
 package com.siasa.siasaprincipal.service;
 
 import com.siasa.siasaprincipal.dto.CodigoUDto;
-import com.siasa.siasaprincipal.dto.RfidDto;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -20,5 +19,5 @@ public interface CodigoUService {
 
     ResponseEntity<CodigoUDto> update(@PathVariable String id, @RequestBody CodigoUDto codigoUDto);
 
-    ResponseEntity<Void> delete(@PathVariable String id);
+    ResponseEntity<String> delete(@PathVariable String id);
 }

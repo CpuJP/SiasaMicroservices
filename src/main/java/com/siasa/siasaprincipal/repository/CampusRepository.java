@@ -17,4 +17,7 @@ public interface CampusRepository extends JpaRepository<Campus, Integer>, JpaSpe
 
     @Transactional(readOnly = true)
     boolean existsByCodigoUIdCodigoU(String idCodigoU);
+
+    @Transactional(readOnly = false)
+    void deleteAllByCodigoUIdCodigoU(String idCodigoU);
 }
