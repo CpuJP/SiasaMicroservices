@@ -24,7 +24,7 @@ public class Laboratorio {
     private LocalDateTime fechaSalida;
 
     //Se crea la relacion 1:1 entre las entidades laboratorio y codigoU
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "codigou_id_codigou")
     private CodigoU codigoU;
 }

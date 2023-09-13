@@ -16,5 +16,5 @@ public class LaboratorioDto implements Serializable {
     private LocalDateTime fechaSalida;
 
     @NotNull
-    private CodigoU codigoU;
+    private CodigoUDto codigoUDto;
 }

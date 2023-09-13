@@ -8,8 +8,6 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
-
 @Repository
 @EnableJpaRepositories
 public interface CampusRepository extends JpaRepository<Campus, Integer>, JpaSpecificationExecutor<Campus> {
