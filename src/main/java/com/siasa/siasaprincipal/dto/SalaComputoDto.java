@@ -19,5 +19,5 @@ public class SalaComputoDto implements Serializable {
     private String salaIngreso;
 
     @NotNull
-    private CodigoU codigoU;
+    private CodigoUDto codigoUDto;
 }
