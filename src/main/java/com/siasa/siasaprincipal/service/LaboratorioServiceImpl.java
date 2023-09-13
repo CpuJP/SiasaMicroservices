@@ -123,44 +123,32 @@ public class LaboratorioServiceImpl implements LaboratorioService{
 
     @Override
     public ResponseEntity<LaboratorioDto> createOut(String idRfid) {
-        Optional<CodigoU> codigoUOptional = Optional.ofNullable(codigoURepository.findByRfidIdRfid(idRfid)
-                .orElseThrow(() -> new MessageNotFoundException(String.format("El carnet %s no registra en base de datos", idRfid))));
-        if (codigoUOptional.isPresent()) {
-            CodigoU codigoU = codigoUOptional.get();
-            Optional<Laboratorio> laboratorio = Optional.ofNullable(laboratorioRepository.findFirstByCodigoUIdCodigoUOrderByFechaIngresoDesc(codigoU.getIdCodigoU())
-                    .orElseThrow(() -> new MessageNotFoundException(String.format("No registra ningún ingreso al laboratorio la persona con código de carnet %s", idRfid))));
-            if (laboratorio.isPresent()) {
-                Laboratorio laboratorio1 = laboratorio.get();
+        CodigoU codigoU = codigoURepository.findByRfidIdRfid(idRfid)
+                .orElseThrow(() -> new MessageNotFoundException(String.format("El carnet %s no registra en base de datos", idRfid)));
 
-                if (laboratorio1.getFechaSalida() == null) {
-                    LocalDateTime fechaActual = LocalDateTime.now();
-                    laboratorio1.setFechaSalida(fechaActual);
-                    laboratorioRepository.save(laboratorio1);
+        Laboratorio laboratorio = laboratorioRepository.findFirstByCodigoUIdCodigoUOrderByFechaIngresoDesc(codigoU.getIdCodigoU())
+                .orElseThrow(() -> new MessageNotFoundException(String.format("No registra ningún ingreso al laboratorio la persona con código de carnet %s", idRfid)));
 
-                    URI location = ServletUriComponentsBuilder
-                            .fromCurrentRequest()
-                            .path("/{id}")
-                            .buildAndExpand(laboratorio1.getIdLaboratorio())
-                            .toUri();
-                    log.info("Registro de salida a Laboratorio creado exitosamente");
-
-                    LaboratorioDto laboratorioDto = mapToDto(laboratorio1);
-                    return ResponseEntity.created(location).body(laboratorioDto);
-                } else {
-                    log.warn(String.format("la persona con código %s no ha ingresado antes al laboratorio", codigoU.getIdCodigoU()));
-                    throw new MessageBadRequestException(String.format("la persona con código %s no ha ingresado antes al laboratorio", codigoU.getIdCodigoU()));
-                }
-
-            } else {
-                log.warn(String.format("No registra ningún ingreso al laboratorio la persona con código %s", codigoU.getRfid()));
-                throw new MessageBadRequestException(String.format("No registra ningún ingreso al laboratorio la persona con código de carnet %s", idRfid));
-            }
-
-        } else {
-            log.warn(String.format("El carnet %s no registra en base de datos", idRfid));
-            throw new MessageBadRequestException(String.format("El carnet %s no registra en base de datos", idRfid));
+        if (laboratorio.getFechaSalida() != null) {
+            log.warn(String.format("La persona con código %s no ha ingresado antes al laboratorio", codigoU.getIdCodigoU()));
+            throw new MessageBadRequestException(String.format("La persona con código %s no ha ingresado antes al laboratorio", codigoU.getIdCodigoU()));
         }
+
+        LocalDateTime fechaActual = LocalDateTime.now();
+        laboratorio.setFechaSalida(fechaActual);
+        laboratorioRepository.save(laboratorio);
+
+        URI location = ServletUriComponentsBuilder
+                .fromCurrentRequest()
+                .path("/{id}")
+                .buildAndExpand(laboratorio.getIdLaboratorio())
+                .toUri();
+        log.info("Registro de salida a Laboratorio creado exitosamente");
+
+        LaboratorioDto laboratorioDto = mapToDto(laboratorio);
+        return ResponseEntity.created(location).body(laboratorioDto);
     }
+
 
     @Override
     public ResponseEntity<String> existsByCodigoUIdCodigoU(String idCodigoU) {
