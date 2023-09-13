@@ -49,6 +49,7 @@ public class CodigoUController {
         return codigoUService.update(id, codigoUDto);
     }
 
+    @Operation(summary = "Delete all information related to CodigoU")
     @DeleteMapping("{id}")
     public ResponseEntity<String> deleteAll(@PathVariable String id) {
         return codigoUService.delete(id);
