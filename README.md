@@ -3,22 +3,19 @@ Repository of the "PROPOSAL FOR AN INFORMATION SYSTEM FOR THE AUTOMATION OF ACAD
 
 This microservice is a crucial component of the SIASA architecture, a project whose primary goal is to qualify for the title of Computer Systems Engineer. The microservice provides an interface for accessing and managing data related to various schemas.
 
-## API Documentation
+## SIASA Architecture Documentation
 
-The API documentation is available at the following route, based on OpenAPI 3:
+The API documentation is available in the following path, from the main repository:
 
-- [API Documentation](/swagger-ui/index.html#/)
+- [SIASA Documentation](https://github.com/CpuJP/SiasaMicroservices)
 
-## Available Schemas
+## Available projects
 
-This microservice handles six different schemas:
+This architecture handles different projects:
 
-1. **Library -> Biblioteca**: Allows the management of information related to the entry.
-2. **Laboratory -> Laboratorio**: Facilitates the monitoring of income-related activities.
-3. **Computer Room -> Sala Cómputo**: Manages data on available computer rooms and their admissions.
-4. **Campus -> Campus**: Provides information on revenues.
-5. **U-Code-> CódigoU**: Allows the management of university codes and their assignment to students.
-6. **RFID -> Rfid**: Facilitates the management of data related to radio frequency identification systems (RFID).
+1. **[siasa-principal](https://github.com/CpuJP/SiasaMicroservices/tree/siasa-principal) ->** This microservice is the main pillar of the SIASA architecture, and it does all the management and automation within the campus.
+2. **[siasa-prestamos](https://github.com/CpuJP/SiasaMicroservices/tree/siasa-prestamos) ->** This microservice is linked to a database completely independent of that of the main microservice, this microservice is in charge of the inventories and loans of university well-being (sports and audiovisual material).
+
 
 
 ## Contribution
