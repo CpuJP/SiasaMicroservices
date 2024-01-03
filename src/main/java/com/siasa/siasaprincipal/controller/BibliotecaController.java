@@ -11,6 +11,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/biblioteca")
+@CrossOrigin(origins = "*")
 public class BibliotecaController {
 
     private final BibliotecaService bibliotecaService;
