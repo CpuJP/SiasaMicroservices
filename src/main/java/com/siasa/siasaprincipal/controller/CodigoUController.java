@@ -11,7 +11,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/codigou")
-@CrossOrigin(origins = "*")
 public class CodigoUController {
 
     private final CodigoUService codigoUService;
