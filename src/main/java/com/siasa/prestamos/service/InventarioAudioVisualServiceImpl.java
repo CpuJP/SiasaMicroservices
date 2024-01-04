@@ -5,9 +5,11 @@ import com.siasa.prestamos.entity.InventarioAudioVisual;
 import com.siasa.prestamos.exception.MessageBadRequestException;
 import com.siasa.prestamos.exception.MessageConflictException;
 import com.siasa.prestamos.exception.MessageNotContentException;
+import com.siasa.prestamos.exception.MessageNotFoundException;
 import com.siasa.prestamos.repository.InventarioAudioVisualRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
+import org.modelmapper.TypeMap;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -87,6 +89,32 @@ public class InventarioAudioVisualServiceImpl implements InventarioAudioVisualSe
 
     @Override
     public ResponseEntity<InventarioAudioVisualDTO> update(Integer id, InventarioAudioVisualDTO audioVisualDTO) {
-        return null;
+        try {
+            InventarioAudioVisual inventarioAudioVisual = audioVisualRepository.findById(id)
+                    .orElseThrow(() -> new MessageNotFoundException(String.format("El objeto del inventario con id %s no está registrado en base de datos", id)));
+
+            if (audioVisualDTO.getNombre() == null || audioVisualDTO.getDisponible() < 0) {
+                throw new MessageBadRequestException("El nombre y la cantidad disponible son campos obligatorios");
+            }
+
+            inventarioAudioVisual.setNombre(audioVisualDTO.getNombre().toUpperCase());
+            inventarioAudioVisual.setDescripcion(audioVisualDTO.getDescripcion().toUpperCase());
+            inventarioAudioVisual.setDisponible(audioVisualDTO.getDisponible());
+
+            audioVisualRepository.save(inventarioAudioVisual);
+
+            log.info("Actualización exitosa");
+            TypeMap<InventarioAudioVisual, InventarioAudioVisualDTO> typeMap = modelMapper.typeMap(InventarioAudioVisual.class, InventarioAudioVisualDTO.class);
+            audioVisualDTO = typeMap.map(inventarioAudioVisual);
+            return ResponseEntity.ok(audioVisualDTO);
+        } catch (MessageNotFoundException e) {
+            throw e;
+        } catch (MessageBadRequestException | MessageConflictException e) {
+            log.warn(e.getMessage());
+            throw e;
+        } catch (Exception e) {
+            log.error("Error inseperado al actualizar el objeto del inventario", e);
+            throw new MessageConflictException("Error inseperado al actualizar el objeto del inventario");
+        }
     }
 }

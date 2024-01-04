@@ -15,6 +15,8 @@ public class PrestamoAudioVisualDTO implements Serializable {
 
     private LocalDateTime fechaDevolucion;
 
+    private String nota;
+
     @NotNull
     private String idUdec;
 

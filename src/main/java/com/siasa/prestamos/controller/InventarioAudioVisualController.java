@@ -24,7 +24,7 @@ public class InventarioAudioVisualController {
         return inventarioAudioVisualService.findAll();
     }
 
-    @Operation(summary = "Gett all AudioVisual's by Name")
+    @Operation(summary = "Get all AudioVisual's by Name")
     @GetMapping("/{nombre}")
     public ResponseEntity<List<InventarioAudioVisualDTO>> findByNombre(@PathVariable String nombre) {
         return inventarioAudioVisualService.findByNombre(nombre);
@@ -34,5 +34,11 @@ public class InventarioAudioVisualController {
     @PostMapping
     public ResponseEntity<InventarioAudioVisualDTO> create(@RequestBody InventarioAudioVisualDTO audioVisualDTO) {
         return inventarioAudioVisualService.create(audioVisualDTO);
+    }
+
+    @Operation(summary = "Update info to InventarioAudioVisual")
+    @PatchMapping("/update/{id}")
+    public ResponseEntity<InventarioAudioVisualDTO> update(@PathVariable Integer id, @RequestBody InventarioAudioVisualDTO audioVisualDTO) {
+        return inventarioAudioVisualService.update(id, audioVisualDTO);
     }
 }

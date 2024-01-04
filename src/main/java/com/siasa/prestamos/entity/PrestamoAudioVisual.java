@@ -23,6 +23,9 @@ public class PrestamoAudioVisual {
     @Column(nullable = true, columnDefinition = "TIMESTAMP")
     private LocalDateTime fechaDevolucion;
 
+    @Column(nullable = true, length = 150)
+    private String nota;
+
     @Column(nullable = false, length = 15)
     private String idUdec;
 
