@@ -2,7 +2,7 @@ package com.siasa.siasaprincipal.controller;
 
 import com.siasa.siasaprincipal.dto.RfidDto;
 import com.siasa.siasaprincipal.service.RfidService;
-import io.swagger.v3.oas.annotations.OpenAPI31;
+//import io.swagger.v3.oas.annotations.OpenAPI31;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -11,6 +11,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/rfid")
+@CrossOrigin(origins = "*")
 public class RfidController {
 
     private final RfidService rfidService;
