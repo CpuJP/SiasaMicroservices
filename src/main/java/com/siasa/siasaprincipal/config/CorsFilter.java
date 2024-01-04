@@ -12,7 +12,6 @@ import java.io.IOException;
  class CorsFilter implements Filter {
 
     @Override
-    @Bean
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
             throws IOException, ServletException {
         HttpServletResponse httpResponse = (HttpServletResponse) response;
