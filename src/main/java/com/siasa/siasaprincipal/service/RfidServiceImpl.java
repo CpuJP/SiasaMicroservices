@@ -48,7 +48,21 @@ public class RfidServiceImpl implements RfidService{
         //si la lista esta vacia, se envia un mensaje de excepcion donde se muestra el codigo 204 sin contenido
         } else {
             log.warn("No hay datos en la tabla Rfid");
-            throw new MessageNotContentException("No hay datos en la tabla Rfid");
+            throw new MessageNotFoundException("No hay datos en la tabla Rfid");
+        }
+    }
+
+    @Override
+    public ResponseEntity<List<RfidDto>> findRfidWithoutCodigoU() {
+        List<Rfid> rfids = rfidRepository.findRfidWithoutCodigoU();
+        if (!rfids.isEmpty()) {
+            List<RfidDto> rfidDtos = rfids.stream()
+                    .map(rfid -> modelMapper.map(rfid, RfidDto.class))
+                    .collect(Collectors.toList());
+            return new ResponseEntity<>(rfidDtos, HttpStatus.OK);
+        } else {
+            log.warn("Todos los carnets registrados se encuentran vinculados a un usuario");
+            throw new MessageNotFoundException("Todos los carnets registrados se encuentran vinculados a un usuario");
         }
     }
 

@@ -3,10 +3,7 @@ package com.siasa.siasaprincipal.service;
 import com.siasa.siasaprincipal.dto.CodigoUDto;
 import com.siasa.siasaprincipal.entity.CodigoU;
 import com.siasa.siasaprincipal.entity.Rfid;
-import com.siasa.siasaprincipal.exception.MessageBadRequestException;
-import com.siasa.siasaprincipal.exception.MessageConflictException;
-import com.siasa.siasaprincipal.exception.MessageNotContentException;
-import com.siasa.siasaprincipal.exception.MessageNotFoundException;
+import com.siasa.siasaprincipal.exception.*;
 import com.siasa.siasaprincipal.repository.*;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -57,7 +54,7 @@ public class CodigoUServiceImpl implements CodigoUService{
             return new ResponseEntity<>(codigoUDtos, HttpStatus.OK);
         } else {
             log.warn("No hay datos en la tabla codigoU");
-            throw new MessageNotContentException("No hay datos en la tabla codigoU");
+            throw new MessageNotFoundException("No hay datos en la tabla codigoU");
         }
     }
 
@@ -111,7 +108,7 @@ public class CodigoUServiceImpl implements CodigoUService{
             throw new MessageConflictException(String.format("El código de carnet %s que está intentado vincular con el código %s ya se encuentra vinculado a otra persona", codigoUDto.getRfidDto().getIdRfid(), codigoUDto.getIdCodigoU()));
         } else if (!rfidRepository.existsById(codigoUDto.getRfidDto().getIdRfid())) {
             log.warn("El carnet que se intenta asociar no existe");
-            throw new MessageBadRequestException("El carnet que se intenta asociar no existe");
+            throw new MessageNotFoundException("El carnet que se intenta asociar no existe");
         } else {
             CodigoU codigoU = modelMapper.map(codigoUDto, CodigoU.class);
             codigoU.setPrimerNombre(codigoU.getPrimerNombre().toUpperCase().trim());
@@ -153,7 +150,7 @@ public class CodigoUServiceImpl implements CodigoUService{
             // Verificar si el nuevo RFID existe
             if (!rfidRepository.existsById(codigoUDto.getRfidDto().getIdRfid())) {
                 log.warn("El carnet que se intenta asociar no existe");
-                throw new MessageBadRequestException("El carnet que se intenta asociar no existe");
+                throw new MessageConflictException("El carnet que se intenta asociar no existe");
             }
 
             // Actualizar los campos de la persona
@@ -189,7 +186,7 @@ public class CodigoUServiceImpl implements CodigoUService{
             throw e;
         } catch (Exception e) {
             log.error("Error inesperado al actualizar la persona.", e);
-            throw new MessageConflictException("Error inesperado al actualizar la persona.");
+            throw new MessageInternalServerErrorException("Error inesperado al actualizar la persona.");
         }
     }
 
@@ -202,24 +199,11 @@ public class CodigoUServiceImpl implements CodigoUService{
         boolean borrarLaboratorio = laboratorioRepository.existsByCodigoUIdCodigoU(id);
         boolean borrarSalaComputo = salaComputoRepository.existsByCodigoUIdCodigoU(id);
 
-        // Si no existe ninguno de los registros, retorna un ResponseEntity con un mensaje
-        if (!borrarBiblioteca && !borrarCampus && !borrarLaboratorio && !borrarSalaComputo) {
-            throw new MessageNotFoundException(String.format("No existen registros vinculados al código %s para eliminar", id));
-        }
-
         // Eliminar registros de las tablas relacionadas
-        if (borrarBiblioteca) {
-            bibliotecaRepository.deleteAllByCodigoUIdCodigoU(id);
-        }
-        if (borrarCampus) {
-            campusRepository.deleteAllByCodigoUIdCodigoU(id);
-        }
-        if (borrarLaboratorio) {
-            laboratorioRepository.deleteAllByCodigoUIdCodigoU(id);
-        }
-        if (borrarSalaComputo) {
-            salaComputoRepository.deleteAllByCodigoUIdCodigoU(id);
-        }
+        if (borrarBiblioteca) bibliotecaRepository.deleteAllByCodigoUIdCodigoU(id);
+        if (borrarCampus) campusRepository.deleteAllByCodigoUIdCodigoU(id);
+        if (borrarLaboratorio) laboratorioRepository.deleteAllByCodigoUIdCodigoU(id);
+        if (borrarSalaComputo) salaComputoRepository.deleteAllByCodigoUIdCodigoU(id);
 
         // Obtener el ID del RFID
         CodigoUDto codigoU = findById(id).getBody();

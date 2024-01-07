@@ -28,6 +28,12 @@ public class RfidController {
         return rfidService.findAll();
     }
 
+    @GetMapping("/without")
+    @Operation(summary = "Get all Rfid without U code ")
+    public ResponseEntity<List<RfidDto>> findRfidWithoutCodigoU() {
+        return rfidService.findRfidWithoutCodigoU();
+    }
+
     //se crea el endpoint post con la ruta /{id} donde se envia el id desde la api al server
     @Operation(summary = "Find Rfid by Id")
     @PostMapping("/{id}")

@@ -29,16 +29,16 @@ public class BibliotecaController {
 
     @GetMapping
     @Operation(summary = "Get all Biblioteca access",
-    responses = {
-            @ApiResponse(responseCode = "200", description = "OK - Lista traida con datos",
-                    content = @Content(mediaType = "application/json",
-                            array = @ArraySchema(schema = @Schema(implementation = BibliotecaDto.class)))),
-            @ApiResponse(responseCode = "404", description = "Not Found - No hay datos en la lista",
-                    content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = ErrorResponseDto.class))),
-            @ApiResponse(responseCode = "500", description = "Internal Server Error - Error interno del servidor",
-                    content = @Content(schema = @Schema(hidden = true)))
-    })
+        responses = {
+                @ApiResponse(responseCode = "200", description = "OK - Lista traida con datos",
+                        content = @Content(mediaType = "application/json",
+                                array = @ArraySchema(schema = @Schema(implementation = BibliotecaDto.class)))),
+                @ApiResponse(responseCode = "404", description = "Not Found - No hay datos en la lista",
+                        content = @Content(mediaType = "application/json",
+                                schema = @Schema(implementation = ErrorResponseDto.class))),
+                @ApiResponse(responseCode = "500", description = "Internal Server Error - Error interno del servidor",
+                        content = @Content(schema = @Schema(hidden = true)))
+        })
     public ResponseEntity<List<BibliotecaDto>> findAll() {
         return bibliotecaService.findAll();
     }
@@ -116,8 +116,8 @@ public class BibliotecaController {
             @ApiResponse(responseCode = "404", description = "Not Found - El carnet no registra",
                     content = @Content(mediaType = "application/json",
                         schema = @Schema(implementation = ErrorResponseDto.class))),
-                @ApiResponse(responseCode = "500", description = "Internal Server Error - Error interno del servidor",
-                        content = @Content(schema = @Schema(hidden = true)))
+            @ApiResponse(responseCode = "500", description = "Internal Server Error - Error interno del servidor",
+                    content = @Content(schema = @Schema(hidden = true)))
         })
     public ResponseEntity<BibliotecaDto> create(
             @Parameter(name = "idRfid", description = "ID del carnet a registrar ingreso",

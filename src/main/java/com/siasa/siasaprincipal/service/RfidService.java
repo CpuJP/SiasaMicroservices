@@ -12,6 +12,8 @@ public interface RfidService {
 
     ResponseEntity<List<RfidDto>> findAll();
 
+    ResponseEntity<List<RfidDto>> findRfidWithoutCodigoU();
+
     ResponseEntity<RfidDto> findById(@PathVariable String id);
 
     ResponseEntity<RfidDto> create(@RequestBody RfidDto rfidDto);
