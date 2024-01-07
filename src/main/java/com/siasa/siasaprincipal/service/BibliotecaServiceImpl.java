@@ -129,7 +129,7 @@ public class BibliotecaServiceImpl implements BibliotecaService{
             throw new MessageNotFoundException(String.format("La persona con el código %s no existe en base de datos", idCodigoU));
         }
         if (bibliotecaRepository.existsByCodigoUIdCodigoU(idCodigoU)) {
-            return ResponseEntity.ok(String.format("La persona con código %s si registra ingresos al campus", idCodigoU));
+            return ResponseEntity.ok(String.format("La persona con código %s si registra ingresos a la biblioteca", idCodigoU));
         } else {
             throw new MessageNotFoundException(String.format("La persona con código %s NO registra ingresos a la biblioteca", idCodigoU));
         }

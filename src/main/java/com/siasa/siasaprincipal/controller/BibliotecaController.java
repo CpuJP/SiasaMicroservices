@@ -1,8 +1,7 @@
 package com.siasa.siasaprincipal.controller;
 
 import com.siasa.siasaprincipal.dto.BibliotecaDto;
-import com.siasa.siasaprincipal.exception.ErrorResponse;
-import com.siasa.siasaprincipal.exception.MessageNotContentException;
+import com.siasa.siasaprincipal.dto.ErrorResponseDto;
 import com.siasa.siasaprincipal.service.BibliotecaService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -11,7 +10,6 @@ import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -37,7 +35,7 @@ public class BibliotecaController {
                             array = @ArraySchema(schema = @Schema(implementation = BibliotecaDto.class)))),
             @ApiResponse(responseCode = "404", description = "Not Found - No hay datos en la lista",
                     content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = ErrorResponse.class))),
+                            schema = @Schema(implementation = ErrorResponseDto.class))),
             @ApiResponse(responseCode = "500", description = "Internal Server Error - Error interno del servidor",
                     content = @Content(schema = @Schema(hidden = true)))
     })
@@ -52,7 +50,7 @@ public class BibliotecaController {
             @ApiResponse(responseCode = "200", description = "OK - Lista traida con datos paginados"),
             @ApiResponse(responseCode = "404", description = "Not Found - No hay datos en la lista paginada",
                     content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = ErrorResponse.class))),
+                            schema = @Schema(implementation = ErrorResponseDto.class))),
             @ApiResponse(responseCode = "500", description = "Internal Server Error - Error interno del servidor",
                     content = @Content(schema = @Schema(hidden = true)))
     },
@@ -69,17 +67,19 @@ public class BibliotecaController {
 
     @GetMapping("/codigou/{idCodigoU}")
     @Operation(summary = "Get all access to the campus by Id CodigoU",
-    responses = {
-            @ApiResponse(responseCode = "200", description = "OK - Datos encontrados",
-            content = @Content(mediaType = "application/json",
-                    schema = @Schema(implementation = BibliotecaDto.class))),
-            @ApiResponse(responseCode = "400", description = "Bad Request - Datos no existentes",
-            content = @Content(mediaType = "application/json",
-                    schema = @Schema(implementation = ErrorResponse.class))),
-            @ApiResponse(responseCode = "404", description = "Not Found - Datos no existentes",
-                    content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = ErrorResponse.class)))
-    })
+        responses = {
+                @ApiResponse(responseCode = "200", description = "OK - Datos encontrados",
+                content = @Content(mediaType = "application/json",
+                        schema = @Schema(implementation = BibliotecaDto.class))),
+                @ApiResponse(responseCode = "400", description = "Bad Request - Datos no existentes",
+                content = @Content(mediaType = "application/json",
+                        schema = @Schema(implementation = ErrorResponseDto.class))),
+                @ApiResponse(responseCode = "404", description = "Not Found - Datos no existentes",
+                        content = @Content(mediaType = "application/json",
+                                schema = @Schema(implementation = ErrorResponseDto.class))),
+                @ApiResponse(responseCode = "500", description = "Internal Server Error - Error interno del servidor",
+                        content = @Content(schema = @Schema(hidden = true)))
+        })
     public ResponseEntity<List<BibliotecaDto>> findByCodigoU(
             @Parameter(name = "idCodigoU", description = "Id de la persona a buscar",
                 in = ParameterIn.PATH, example = "461220346", schema = @Schema(type = "string"))
@@ -95,9 +95,14 @@ public class BibliotecaController {
                             schema = @Schema(type = "string"))),
                 @ApiResponse(responseCode = "404", description = "Not Found - Usuario con ID NO registra",
                         content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = ErrorResponse.class)))
+                            schema = @Schema(implementation = ErrorResponseDto.class))),
+                @ApiResponse(responseCode = "500", description = "Internal Server Error - Error interno del servidor",
+                        content = @Content(schema = @Schema(hidden = true)))
         })
-    public ResponseEntity<String> existsByCodigoU(@PathVariable String idCodigoU) {
+    public ResponseEntity<String> existsByCodigoU(
+            @Parameter(name = "idCodigoU", description = "Id de la persona a buscar",
+                    in = ParameterIn.PATH, example = "461220346", schema = @Schema(type = "string"))
+            @PathVariable String idCodigoU) {
         return bibliotecaService.existsByCodigoUIdCodigoU(idCodigoU);
     }
 
@@ -110,7 +115,9 @@ public class BibliotecaController {
                         schema = @Schema(implementation = BibliotecaDto.class))),
             @ApiResponse(responseCode = "404", description = "Not Found - El carnet no registra",
                     content = @Content(mediaType = "application/json",
-                        schema = @Schema(implementation = ErrorResponse.class)))
+                        schema = @Schema(implementation = ErrorResponseDto.class))),
+                @ApiResponse(responseCode = "500", description = "Internal Server Error - Error interno del servidor",
+                        content = @Content(schema = @Schema(hidden = true)))
         })
     public ResponseEntity<BibliotecaDto> create(
             @Parameter(name = "idRfid", description = "ID del carnet a registrar ingreso",

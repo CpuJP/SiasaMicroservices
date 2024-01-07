@@ -1,9 +1,9 @@
-package com.siasa.siasaprincipal.exception;
+package com.siasa.siasaprincipal.dto;
 
 import lombok.Data;
 
 @Data
-public class ErrorResponse {
+public class ErrorResponseDto {
     private String timestamp;
     private int status;
     private String error;

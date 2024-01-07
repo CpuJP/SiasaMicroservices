@@ -1,6 +1,5 @@
 package com.siasa.siasaprincipal.dto;
 
-import com.siasa.siasaprincipal.entity.CodigoU;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 

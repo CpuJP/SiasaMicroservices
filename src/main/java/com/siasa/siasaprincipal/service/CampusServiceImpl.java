@@ -60,7 +60,7 @@ public class CampusServiceImpl implements CampusService{
         } else {
             // Manejo de caso en el que no hay datos en la tabla Campus
             log.warn("No hay datos en la tabla Campus");
-            throw new MessageNotContentException("No hay datos en la tabla Campus");
+            throw new MessageNotFoundException("No hay datos en la tabla Campus");
         }
     }
 
@@ -127,13 +127,13 @@ public class CampusServiceImpl implements CampusService{
     @Override
     public ResponseEntity<String> existsByCodigoUIdCodigoU(String idCodigoU) {
         if (!codigoURepository.existsById(idCodigoU)) {
-            throw new MessageBadRequestException(String.format("La persona con el código %s no existe en base de datos", idCodigoU));
+            throw new MessageNotFoundException(String.format("La persona con el código %s no existe en base de datos", idCodigoU));
         }
         if (campusRepository.existsByCodigoUIdCodigoU(idCodigoU)) {
             return ResponseEntity.ok(String.format("La persona con código %s si registra ingresos al campus", idCodigoU));
 
         } else {
-            throw new MessageBadRequestException(String.format("La persona con código %s NO registra ingresos al campus", idCodigoU));
+            throw new MessageNotFoundException(String.format("La persona con código %s NO registra ingresos al campus", idCodigoU));
         }
     }
 }
