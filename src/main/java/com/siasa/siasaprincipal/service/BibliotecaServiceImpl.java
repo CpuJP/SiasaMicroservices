@@ -60,7 +60,7 @@ public class BibliotecaServiceImpl implements BibliotecaService{
             return new ResponseEntity<>(bibliotecaDtos, HttpStatus.OK);
         } else {
             log.warn("No hay datos en la tabla biblioteca");
-            throw new MessageNotContentException("No hay datos en la tabla biblioteca");
+            throw new MessageNotFoundException("No hay datos en la tabla biblioteca");
         }
     }
 
@@ -73,7 +73,7 @@ public class BibliotecaServiceImpl implements BibliotecaService{
             return new ResponseEntity<>(bibliotecaDtoPage, HttpStatus.OK);
         } else {
             log.warn("No hay datos en la tabla campus");
-            throw new MessageNotContentException("No hay datos en la tabla campus");
+            throw new MessageNotFoundException("No hay datos en la tabla biblioteca");
         }
     }
 
@@ -126,12 +126,12 @@ public class BibliotecaServiceImpl implements BibliotecaService{
     @Override
     public ResponseEntity<String> existsByCodigoUIdCodigoU(String idCodigoU) {
         if (!codigoURepository.existsById(idCodigoU)) {
-            throw new MessageBadRequestException(String.format("La persona con el código %s no existe en base de datos", idCodigoU));
+            throw new MessageNotFoundException(String.format("La persona con el código %s no existe en base de datos", idCodigoU));
         }
         if (bibliotecaRepository.existsByCodigoUIdCodigoU(idCodigoU)) {
             return ResponseEntity.ok(String.format("La persona con código %s si registra ingresos al campus", idCodigoU));
         } else {
-            throw new MessageBadRequestException(String.format("La persona con código %s NO registra ingresos al campus", idCodigoU));
+            throw new MessageNotFoundException(String.format("La persona con código %s NO registra ingresos a la biblioteca", idCodigoU));
         }
     }
 }

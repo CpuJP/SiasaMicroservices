@@ -1,8 +1,17 @@
 package com.siasa.siasaprincipal.controller;
 
 import com.siasa.siasaprincipal.dto.BibliotecaDto;
+import com.siasa.siasaprincipal.exception.ErrorResponse;
+import com.siasa.siasaprincipal.exception.MessageNotContentException;
 import com.siasa.siasaprincipal.service.BibliotecaService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,34 +28,94 @@ public class BibliotecaController {
         this.bibliotecaService = bibliotecaService;
     }
 
-    @Operation(summary = "Get all Biblioteca access")
+
     @GetMapping
+    @Operation(summary = "Get all Biblioteca access",
+    responses = {
+            @ApiResponse(responseCode = "200", description = "OK - Lista traida con datos",
+                    content = @Content(mediaType = "application/json",
+                            array = @ArraySchema(schema = @Schema(implementation = BibliotecaDto.class)))),
+            @ApiResponse(responseCode = "404", description = "Not Found - No hay datos en la lista",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "500", description = "Internal Server Error - Error interno del servidor",
+                    content = @Content(schema = @Schema(hidden = true)))
+    })
     public ResponseEntity<List<BibliotecaDto>> findAll() {
         return bibliotecaService.findAll();
     }
 
-    @Operation(summary = "Get all Biblioteca access in pages")
+
     @GetMapping("/page")
+    @Operation(summary = "Get all Biblioteca access in pages",
+    responses = {
+            @ApiResponse(responseCode = "200", description = "OK - Lista traida con datos paginados"),
+            @ApiResponse(responseCode = "404", description = "Not Found - No hay datos en la lista paginada",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "500", description = "Internal Server Error - Error interno del servidor",
+                    content = @Content(schema = @Schema(hidden = true)))
+    },
+    parameters = {
+            @Parameter(name = "pageNumber", description = "Número de página. Por defecto: 0",
+                    in = ParameterIn.QUERY, example = "0", schema = @Schema(type = "integer")),
+            @Parameter(name = "pageSize", description = "Tamaño de la página. Por defecto: 10",
+                    in = ParameterIn.QUERY, example = "10", schema = @Schema(type = "integer"))
+    })
     public ResponseEntity<Page<BibliotecaDto>> findALlP(@RequestParam(defaultValue = "0") int pageNumber,
                                                         @RequestParam(defaultValue = "10") int pageSize) {
         return bibliotecaService.findAllP(pageNumber, pageSize);
     }
 
-    @Operation(summary = "Get all access to the campus by Id CodigoU")
     @GetMapping("/codigou/{idCodigoU}")
-    public ResponseEntity<List<BibliotecaDto>> findByCodigoU(@PathVariable String idCodigoU) {
+    @Operation(summary = "Get all access to the campus by Id CodigoU",
+    responses = {
+            @ApiResponse(responseCode = "200", description = "OK - Datos encontrados",
+            content = @Content(mediaType = "application/json",
+                    schema = @Schema(implementation = BibliotecaDto.class))),
+            @ApiResponse(responseCode = "400", description = "Bad Request - Datos no existentes",
+            content = @Content(mediaType = "application/json",
+                    schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "404", description = "Not Found - Datos no existentes",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponse.class)))
+    })
+    public ResponseEntity<List<BibliotecaDto>> findByCodigoU(
+            @Parameter(name = "idCodigoU", description = "Id de la persona a buscar",
+                in = ParameterIn.PATH, example = "461220346", schema = @Schema(type = "string"))
+            @PathVariable String idCodigoU) {
         return bibliotecaService.findByCodigoUIdCodigoU(idCodigoU);
     }
 
-    @Operation(summary = "Get if there entrance to the campus")
     @GetMapping("/exists/{idCodigoU}")
+    @Operation(summary = "Get if there entrance to the campus",
+        responses = {
+                @ApiResponse(responseCode = "200", description = "OK - Usuario con ID existe",
+                        content = @Content(mediaType = "text/plain",
+                            schema = @Schema(type = "string"))),
+                @ApiResponse(responseCode = "404", description = "Not Found - Usuario con ID NO registra",
+                        content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponse.class)))
+        })
     public ResponseEntity<String> existsByCodigoU(@PathVariable String idCodigoU) {
         return bibliotecaService.existsByCodigoUIdCodigoU(idCodigoU);
     }
 
-    @Operation(summary = "Create the Biblioteca access record")
+
     @PostMapping("{idRfid}")
-    public ResponseEntity<BibliotecaDto> create(@PathVariable String idRfid) {
+    @Operation(summary = "Create the Biblioteca access record",
+        responses = {
+            @ApiResponse(responseCode = "201", description = "Created - Registro de ingreso creado existosamente",
+                    content = @Content(mediaType = "application/json",
+                        schema = @Schema(implementation = BibliotecaDto.class))),
+            @ApiResponse(responseCode = "404", description = "Not Found - El carnet no registra",
+                    content = @Content(mediaType = "application/json",
+                        schema = @Schema(implementation = ErrorResponse.class)))
+        })
+    public ResponseEntity<BibliotecaDto> create(
+            @Parameter(name = "idRfid", description = "ID del carnet a registrar ingreso",
+                in = ParameterIn.PATH, example = "MN:0L:AA:8T", schema = @Schema(type = "string"))
+            @PathVariable String idRfid) {
         return bibliotecaService.create(idRfid);
     }
 }
