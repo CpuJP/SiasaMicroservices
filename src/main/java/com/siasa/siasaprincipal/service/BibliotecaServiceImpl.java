@@ -5,7 +5,6 @@ import com.siasa.siasaprincipal.dto.CodigoUDto;
 import com.siasa.siasaprincipal.entity.Biblioteca;
 import com.siasa.siasaprincipal.entity.CodigoU;
 import com.siasa.siasaprincipal.exception.MessageBadRequestException;
-import com.siasa.siasaprincipal.exception.MessageNotContentException;
 import com.siasa.siasaprincipal.exception.MessageNotFoundException;
 import com.siasa.siasaprincipal.repository.BibliotecaRepository;
 import com.siasa.siasaprincipal.repository.CodigoURepository;
@@ -15,6 +14,7 @@ import org.modelmapper.TypeMap;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -65,8 +65,9 @@ public class BibliotecaServiceImpl implements BibliotecaService{
     }
 
     @Override
-    public ResponseEntity<Page<BibliotecaDto>> findAllP(int pageNumber, int pageSize) {
-        Pageable pageable = PageRequest.of(pageNumber, pageSize);
+    public ResponseEntity<Page<BibliotecaDto>> findAllP(int pageNumber, int pageSize, String sortBY, String sortOrder) {
+        Sort sort = sortOrder.equalsIgnoreCase(Sort.Direction.ASC.name()) ? Sort.by(sortBY).ascending() : Sort.by(sortBY).descending();
+        Pageable pageable = PageRequest.of(pageNumber, pageSize, sort);
         Page<Biblioteca> bibliotecaPage = bibliotecaRepository.findAll(pageable);
         if (bibliotecaPage.hasContent()) {
             Page<BibliotecaDto> bibliotecaDtoPage = bibliotecaPage.map(this::matToDto);

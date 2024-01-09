@@ -12,6 +12,7 @@ import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,6 +20,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/codigou")
+@Tag(name = "CodigoU API", description = "Operaciones relacionadas con el control de datos de los usuarios")
 public class CodigoUController {
 
     private final CodigoUService codigoUService;
@@ -163,4 +165,3 @@ public class CodigoUController {
         return codigoUService.delete(id);
     }
 }
-

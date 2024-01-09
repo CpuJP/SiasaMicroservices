@@ -13,7 +13,9 @@ public interface BibliotecaService {
     ResponseEntity<List<BibliotecaDto>> findAll();
 
     ResponseEntity<Page<BibliotecaDto>> findAllP(@RequestParam(defaultValue = "0") int pageNumber,
-                                                 @RequestParam(defaultValue = "10") int pageSize);
+                                                 @RequestParam(defaultValue = "10") int pageSize,
+                                                 @RequestParam(defaultValue = "idBiblioteca") String sortBy,
+                                                 @RequestParam(defaultValue = "asc") String sortOrder);
 
     ResponseEntity<List<BibliotecaDto>> findByCodigoUIdCodigoU(@PathVariable String idCodigoU);
 

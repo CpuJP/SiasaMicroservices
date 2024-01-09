@@ -17,4 +17,8 @@ public interface RfidRepository extends JpaRepository<Rfid, String>, JpaSpecific
     @Transactional(readOnly = true)
     @Query("SELECT r FROM Rfid r LEFT JOIN CodigoU c ON r.idRfid = c.rfid.idRfid WHERE c.idCodigoU IS NULL")
     List<Rfid> findRfidWithoutCodigoU();
+
+    @Transactional(readOnly = true)
+    @Query("SELECT CASE WHEN COUNT(c) > 0 THEN true ELSE false END FROM Rfid r LEFT JOIN CodigoU c ON r.idRfid = c.rfid.idRfid WHERE r.idRfid = :rfid")
+    boolean isRfidLinkedToCodigoU(String rfid);
 }

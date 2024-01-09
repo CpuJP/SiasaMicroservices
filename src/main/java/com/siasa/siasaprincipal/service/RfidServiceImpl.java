@@ -106,13 +106,17 @@ public class RfidServiceImpl implements RfidService{
     }
 
     @Override
-    public ResponseEntity<Void> delete(String id) {
+    public ResponseEntity<String> delete(String id) {
+        if (rfidRepository.isRfidLinkedToCodigoU(id)) {
+            log.warn(String.format("El carnet que se intenta eliminar con código %s tiene datos ligados", id));
+            throw new MessageConflictException(String.format("El carnet que se intenta eliminar con código %s tiene datos ligados", id));
+        }
         if (!rfidRepository.existsById(id)) {
             log.warn(String.format("El carnet que se intenta eliminar con código %s no se encuentra registrado", id));
             throw new MessageNotFoundException(String.format("El carnet que se intenta eliminar con código %s no se encuentra registrado", id));
         }
         rfidRepository.deleteById(id);
         log.info(String.format("EL rfid con código %s se eliminó exitosamente", id));
-        return ResponseEntity.noContent().build();
+        return new ResponseEntity<>(String.format("EL rfid con código %s se eliminó exitosamente", id), HttpStatus.OK);
     }
 }

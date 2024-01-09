@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,6 +19,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/biblioteca")
+@Tag(name = "Biblioteca API", description = "Operaciones relacionadas con el control de acceso a la biblioteca")
 public class BibliotecaController {
 
     private final BibliotecaService bibliotecaService;
@@ -58,15 +60,21 @@ public class BibliotecaController {
             @Parameter(name = "pageNumber", description = "Número de página. Por defecto: 0",
                     in = ParameterIn.QUERY, example = "0", schema = @Schema(type = "integer")),
             @Parameter(name = "pageSize", description = "Tamaño de la página. Por defecto: 10",
-                    in = ParameterIn.QUERY, example = "10", schema = @Schema(type = "integer"))
+                    in = ParameterIn.QUERY, example = "10", schema = @Schema(type = "integer")),
+            @Parameter(name = "sortBy", description = "Campo por el cual ordenar la lista",
+                    in = ParameterIn.QUERY, example = "codigoU.primerApellido", schema = @Schema(type = "string")),
+            @Parameter(name = "sortOrder", description = "Orden de la ordenación (asc o desc)",
+                    in = ParameterIn.QUERY, example = "asc", schema = @Schema(type = "string"))
     })
     public ResponseEntity<Page<BibliotecaDto>> findALlP(@RequestParam(defaultValue = "0") int pageNumber,
-                                                        @RequestParam(defaultValue = "10") int pageSize) {
-        return bibliotecaService.findAllP(pageNumber, pageSize);
+                                                        @RequestParam(defaultValue = "10") int pageSize,
+                                                        @RequestParam(defaultValue = "idBiblioteca") String sortBy,
+                                                        @RequestParam(defaultValue = "asc") String sortOrder) {
+        return bibliotecaService.findAllP(pageNumber, pageSize, sortBy, sortOrder);
     }
 
     @GetMapping("/codigou/{idCodigoU}")
-    @Operation(summary = "Get all access to the campus by Id CodigoU",
+    @Operation(summary = "Get all access to the Biblioteca by Id CodigoU",
         responses = {
                 @ApiResponse(responseCode = "200", description = "OK - Datos encontrados",
                 content = @Content(mediaType = "application/json",
@@ -88,7 +96,7 @@ public class BibliotecaController {
     }
 
     @GetMapping("/exists/{idCodigoU}")
-    @Operation(summary = "Get if there entrance to the campus",
+    @Operation(summary = "Get if there entrance to the Biblioteca",
         responses = {
                 @ApiResponse(responseCode = "200", description = "OK - Usuario con ID existe",
                         content = @Content(mediaType = "text/plain",
@@ -113,7 +121,7 @@ public class BibliotecaController {
             @ApiResponse(responseCode = "201", description = "Created - Registro de ingreso creado existosamente",
                     content = @Content(mediaType = "application/json",
                         schema = @Schema(implementation = BibliotecaDto.class))),
-            @ApiResponse(responseCode = "404", description = "Not Found - El carnet no registra",
+            @ApiResponse(responseCode = "404", description = "Not Found - El ID de RFID no registra",
                     content = @Content(mediaType = "application/json",
                         schema = @Schema(implementation = ErrorResponseDto.class))),
             @ApiResponse(responseCode = "500", description = "Internal Server Error - Error interno del servidor",

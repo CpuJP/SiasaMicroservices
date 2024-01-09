@@ -5,6 +5,7 @@ import com.siasa.siasaprincipal.dto.SalaComputoDto;
 import com.siasa.siasaprincipal.entity.CodigoU;
 import com.siasa.siasaprincipal.entity.SalaComputo;
 import com.siasa.siasaprincipal.exception.MessageBadRequestException;
+import com.siasa.siasaprincipal.exception.MessageConflictException;
 import com.siasa.siasaprincipal.exception.MessageNotContentException;
 import com.siasa.siasaprincipal.exception.MessageNotFoundException;
 import com.siasa.siasaprincipal.repository.CodigoURepository;
@@ -58,7 +59,7 @@ public class SalaComputoServiceImpl implements SalaComputoService{
             return new ResponseEntity<>(salaComputoDtos, HttpStatus.OK);
         } else {
             log.warn("No hay datos en la tabla sala cómputo");
-            throw new MessageNotContentException("No hay datos en la tabla sala cómputo");
+            throw new MessageNotFoundException("No hay datos en la tabla sala cómputo");
         }
     }
 
@@ -71,7 +72,7 @@ public class SalaComputoServiceImpl implements SalaComputoService{
             return new ResponseEntity<>(salaComputoDtoPage, HttpStatus.OK);
         } else {
             log.warn("No hay datos en la tabla sala cómputo");
-            throw new MessageNotContentException("No hay datos en la tabla sala cómputo");
+            throw new MessageNotFoundException("No hay datos en la tabla sala cómputo");
         }
     }
 
@@ -126,11 +127,11 @@ public class SalaComputoServiceImpl implements SalaComputoService{
         CodigoU codigoU = codigoURepository.findByRfidIdRfid(idRfid)
                 .orElseThrow(() -> new MessageNotFoundException(String.format("El carnet %s no registra en base de datos", idRfid)));
         SalaComputo salaComputo = salaComputoRepository.findFirstByCodigoUIdCodigoUOrderByFechaIngresoDesc(codigoU.getIdCodigoU())
-                .orElseThrow(() -> new MessageNotFoundException(String.format("La persona con código %s no ha ingresado antes al laboratorio", codigoU.getIdCodigoU())));
+                .orElseThrow(() -> new MessageBadRequestException(String.format("La persona con código %s no ha ingresado antes al laboratorio", codigoU.getIdCodigoU())));
 
         if (salaComputo.getFechaSalida() != null) {
             log.warn(String.format("La persona con código %s no ha ingresado antes al laboratorio", codigoU.getIdCodigoU()));
-            throw new MessageBadRequestException(String.format("La persona con código %s no ha ingresado antes al laboratorio", codigoU.getIdCodigoU()));
+            throw new MessageConflictException(String.format("La persona con código %s no ha ingresado antes al laboratorio", codigoU.getIdCodigoU()));
         }
 
         LocalDateTime fechaActual = LocalDateTime.now();
@@ -151,12 +152,12 @@ public class SalaComputoServiceImpl implements SalaComputoService{
     @Override
     public ResponseEntity<String> existsByCodigoUIdCodigoU(String idCodigoU) {
         if (!codigoURepository.existsById(idCodigoU)) {
-            throw new MessageBadRequestException(String.format("La persona con el código %s no existe en base de datos", idCodigoU));
+            throw new MessageNotFoundException(String.format("La persona con el código %s no existe en base de datos", idCodigoU));
         }
         if (salaComputoRepository.existsByCodigoUIdCodigoU(idCodigoU)) {
             return ResponseEntity.ok(String.format("La persona con código %s si registra ingreso a la sala de cómputo", idCodigoU));
         } else {
-            throw new MessageBadRequestException(String.format("La persona con código %s NO registra ingresos a la sala de cómputo", idCodigoU));
+            throw new MessageNotFoundException(String.format("La persona con código %s NO registra ingresos a la sala de cómputo", idCodigoU));
         }
     }
 }

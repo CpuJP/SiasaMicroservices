@@ -18,5 +18,5 @@ public interface RfidService {
 
     ResponseEntity<RfidDto> create(@RequestBody RfidDto rfidDto);
 
-    ResponseEntity<Void> delete(@PathVariable String id);
+    ResponseEntity<String> delete(@PathVariable String id);
 }

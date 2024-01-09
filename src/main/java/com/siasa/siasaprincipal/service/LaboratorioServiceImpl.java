@@ -5,6 +5,7 @@ import com.siasa.siasaprincipal.dto.LaboratorioDto;
 import com.siasa.siasaprincipal.entity.CodigoU;
 import com.siasa.siasaprincipal.entity.Laboratorio;
 import com.siasa.siasaprincipal.exception.MessageBadRequestException;
+import com.siasa.siasaprincipal.exception.MessageConflictException;
 import com.siasa.siasaprincipal.exception.MessageNotContentException;
 import com.siasa.siasaprincipal.exception.MessageNotFoundException;
 import com.siasa.siasaprincipal.repository.CodigoURepository;
@@ -58,7 +59,7 @@ public class LaboratorioServiceImpl implements LaboratorioService{
             return new ResponseEntity<>(laboratorioDtos, HttpStatus.OK);
         } else {
             log.warn("No hay datos en la tabla laboratorio");
-            throw new MessageNotContentException("No hay datos en la tabla laboratorio");
+            throw new MessageNotFoundException("No hay datos en la tabla laboratorio");
         }
     }
 
@@ -71,7 +72,7 @@ public class LaboratorioServiceImpl implements LaboratorioService{
             return new ResponseEntity<>(laboratorioDtoPage, HttpStatus.OK);
         } else {
             log.warn("No hay datos en la tabla laboratorio");
-            throw new MessageNotContentException("No hay datos en la tabla laboratorio");
+            throw new MessageNotFoundException("No hay datos en la tabla laboratorio");
         }
     }
 
@@ -126,11 +127,11 @@ public class LaboratorioServiceImpl implements LaboratorioService{
                 .orElseThrow(() -> new MessageNotFoundException(String.format("El carnet %s no registra en base de datos", idRfid)));
 
         Laboratorio laboratorio = laboratorioRepository.findFirstByCodigoUIdCodigoUOrderByFechaIngresoDesc(codigoU.getIdCodigoU())
-                .orElseThrow(() -> new MessageNotFoundException(String.format("No registra ningún ingreso al laboratorio la persona con código de carnet %s", idRfid)));
+                .orElseThrow(() -> new MessageBadRequestException(String.format("No registra ningún ingreso al laboratorio la persona con código de carnet %s", idRfid)));
 
         if (laboratorio.getFechaSalida() != null) {
             log.warn(String.format("La persona con código %s no ha ingresado antes al laboratorio", codigoU.getIdCodigoU()));
-            throw new MessageBadRequestException(String.format("La persona con código %s no ha ingresado antes al laboratorio", codigoU.getIdCodigoU()));
+            throw new MessageConflictException(String.format("La persona con código %s no ha ingresado antes al laboratorio", codigoU.getIdCodigoU()));
         }
 
         LocalDateTime fechaActual = LocalDateTime.now();
@@ -152,12 +153,12 @@ public class LaboratorioServiceImpl implements LaboratorioService{
     @Override
     public ResponseEntity<String> existsByCodigoUIdCodigoU(String idCodigoU) {
         if(!codigoURepository.existsById(idCodigoU)) {
-            throw new MessageBadRequestException(String.format("La persona con el código %s no existe en base de datos", idCodigoU));
+            throw new MessageNotFoundException(String.format("La persona con el código %s no existe en base de datos", idCodigoU));
         }
         if (laboratorioRepository.existsByCodigoUIdCodigoU(idCodigoU)) {
             return ResponseEntity.ok(String.format("La persona con código %s si registra ingresos al laboratorio", idCodigoU));
         } else {
-            throw new MessageBadRequestException(String.format("La persona con código %s NO registra ingresos al laboratorio", idCodigoU));
+            throw new MessageNotFoundException(String.format("La persona con código %s NO registra ingresos al laboratorio", idCodigoU));
         }
     }
 }
