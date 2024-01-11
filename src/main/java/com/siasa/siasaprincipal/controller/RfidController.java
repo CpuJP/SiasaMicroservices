@@ -13,6 +13,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -47,6 +48,27 @@ public class RfidController {
         //se utiliza el service de la implementacion en el endpoint para no cargar la
         // parte de transferencia con logica de negocio
         return rfidService.findAll();
+    }
+
+    @GetMapping("/page")
+    @Operation(summary = "Get all Rfid registers in pages",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "OK - Lista traida con datos paginados"),
+                    @ApiResponse(responseCode = "404", description = "Not Found - No hay datos en la lista paginada",
+                            content = @Content(mediaType = "application/json",
+                                    schema = @Schema(implementation = ErrorResponseDto.class))),
+                    @ApiResponse(responseCode = "500", description = "Internal Server Error - Error interno del servidor",
+                            content = @Content(schema = @Schema(hidden = true)))
+            },
+            parameters = {
+                    @Parameter(name = "pageNumber", description = "Número de página. Por defecto: 0",
+                            in = ParameterIn.QUERY, example = "0", schema = @Schema(type = "integer")),
+                    @Parameter(name = "pageSize", description = "Tamaño de la página. Por defecto: 10",
+                            in = ParameterIn.QUERY, example = "10", schema = @Schema(type = "integer"))
+            })
+    public ResponseEntity<Page<RfidDto>> findAllP(@RequestParam(defaultValue = "0") int pageNumber,
+                                                  @RequestParam(defaultValue = "10") int pageSize) {
+        return rfidService.findAllP(pageNumber, pageSize);
     }
 
     @GetMapping("/without")

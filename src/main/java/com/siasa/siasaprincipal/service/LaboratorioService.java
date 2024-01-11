@@ -13,7 +13,9 @@ public interface LaboratorioService {
     ResponseEntity<List<LaboratorioDto>> findAll();
 
     ResponseEntity<Page<LaboratorioDto>> findAllP(@RequestParam(defaultValue = "0") int pageNumber,
-                                                  @RequestParam(defaultValue = "10") int pageSize);
+                                                  @RequestParam(defaultValue = "10") int pageSize,
+                                                  @RequestParam(defaultValue = "idLaboratorio") String sortBy,
+                                                  @RequestParam(defaultValue = "asc") String sortOrder);
 
     ResponseEntity<List<LaboratorioDto>> findByCodigoUIdCodigoU(@PathVariable String idCodiogU);
 

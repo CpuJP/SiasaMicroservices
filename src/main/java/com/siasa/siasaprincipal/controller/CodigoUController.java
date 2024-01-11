@@ -13,6 +13,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -43,6 +44,33 @@ public class CodigoUController {
         })
     public ResponseEntity<List<CodigoUDto>> findAll() {
         return codigoUService.findAll();
+    }
+
+    @GetMapping("/page")
+    @Operation(summary = "Get all CodigoU registers in pages",
+    responses = {
+        @ApiResponse(responseCode = "200", description = "OK - Lista traida con datos paginados"),
+        @ApiResponse(responseCode = "404", description = "Not Found - No hay datos en la lista paginada",
+                content = @Content(mediaType = "application/json",
+                        schema = @Schema(implementation = ErrorResponseDto.class))),
+        @ApiResponse(responseCode = "500", description = "Internal Server Error - Error interno del servidor",
+                content = @Content(schema = @Schema(hidden = true)))
+    },
+    parameters = {
+        @Parameter(name = "pageNumber", description = "Número de página. Por defecto: 0",
+                in = ParameterIn.QUERY, example = "0", schema = @Schema(type = "integer")),
+        @Parameter(name = "pageSize", description = "Tamaño de la página. Por defecto: 10",
+                in = ParameterIn.QUERY, example = "10", schema = @Schema(type = "integer")),
+        @Parameter(name = "sortBy", description = "Campo por el cual ordenar la lista",
+                in = ParameterIn.QUERY, example = "primerApellido", schema = @Schema(type = "string")),
+        @Parameter(name = "sortOrder", description = "Orden de la ordenación (asc o desc)",
+                in = ParameterIn.QUERY, example = "asc", schema = @Schema(type = "string"))
+    })
+    public ResponseEntity<Page<CodigoUDto>> findAllP(@RequestParam(defaultValue = "0") int pageNumber,
+                                                     @RequestParam(defaultValue = "10") int pageSize,
+                                                     @RequestParam(defaultValue = "idCodigoU") String sortBy,
+                                                     @RequestParam(defaultValue = "asc") String sortOrder) {
+        return codigoUService.findAllP(pageNumber, pageSize, sortBy, sortOrder);
     }
 
 

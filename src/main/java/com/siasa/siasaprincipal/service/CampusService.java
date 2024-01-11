@@ -13,7 +13,9 @@ public interface CampusService {
     ResponseEntity<List<CampusDto>> findAll();
 
     ResponseEntity<Page<CampusDto>> findAllP(@RequestParam(defaultValue = "0") int pageNumber,
-                                             @RequestParam(defaultValue = "10") int pageSize);
+                                             @RequestParam(defaultValue = "10") int pageSize,
+                                             @RequestParam(defaultValue = "idCampus") String sortBy,
+                                             @RequestParam(defaultValue = "asc") String sortOrder);
 
     ResponseEntity<List<CampusDto>> findByCodigoUIdCodigoU(@PathVariable String idCodigoU);
 

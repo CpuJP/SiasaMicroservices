@@ -15,6 +15,7 @@ import org.modelmapper.TypeMap;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -65,8 +66,9 @@ public class CampusServiceImpl implements CampusService{
     }
 
     @Override
-    public ResponseEntity<Page<CampusDto>> findAllP(int pageNumber, int pageSize) {
-        Pageable pageable = PageRequest.of(pageNumber, pageSize);
+    public ResponseEntity<Page<CampusDto>> findAllP(int pageNumber, int pageSize, String sortBY, String sortOrder) {
+        Sort sort = sortOrder.equalsIgnoreCase(Sort.Direction.ASC.name()) ? Sort.by(sortBY).ascending() : Sort.by(sortBY).descending();
+        Pageable pageable = PageRequest.of(pageNumber, pageSize, sort);
         Page<Campus> campusPage = campusRepository.findAll(pageable);
         if (campusPage.hasContent()) {
             Page<CampusDto> campusDtoPage = campusPage.map(this::mapToDto);

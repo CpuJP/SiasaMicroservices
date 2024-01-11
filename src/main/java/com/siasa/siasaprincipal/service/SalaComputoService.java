@@ -13,7 +13,9 @@ public interface SalaComputoService {
     ResponseEntity<List<SalaComputoDto>> findAll();
 
     ResponseEntity<Page<SalaComputoDto>> findAllP(@RequestParam(defaultValue = "0") int pageNumber,
-                                                  @RequestParam(defaultValue = "10") int pageSize);
+                                                  @RequestParam(defaultValue = "10") int pageSize,
+                                                  @RequestParam(defaultValue = "idSalaComputo") String sortBy,
+                                                  @RequestParam(defaultValue = "asc") String sortOrder);
 
     ResponseEntity<List<SalaComputoDto>> findByCodigoUIdCodigoU(@PathVariable String idCodigoU);
 

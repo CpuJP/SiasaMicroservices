@@ -60,11 +60,17 @@ public class CampusController {
             @Parameter(name = "pageNumber", description = "Número de página. Por defecto: 0",
                     in = ParameterIn.QUERY, example = "0", schema = @Schema(type = "integer")),
             @Parameter(name = "pageSize", description = "Tamaño de la página. Por defecto: 10",
-                    in = ParameterIn.QUERY, example = "10", schema = @Schema(type = "integer"))
+                    in = ParameterIn.QUERY, example = "10", schema = @Schema(type = "integer")),
+            @Parameter(name = "sortBy", description = "Campo por el cual ordenar la lista",
+                    in = ParameterIn.QUERY, example = "codigoU.primerApellido", schema = @Schema(type = "string")),
+            @Parameter(name = "sortOrder", description = "Orden de la ordenación (asc o desc)",
+                    in = ParameterIn.QUERY, example = "asc", schema = @Schema(type = "string"))
         })
     public ResponseEntity<Page<CampusDto>> findAllP(@RequestParam(defaultValue = "0") int pageNumber,
-                                                    @RequestParam(defaultValue = "10") int pageSize) {
-        return campusService.findAllP(pageNumber, pageSize);
+                                                    @RequestParam(defaultValue = "10") int pageSize,
+                                                    @RequestParam(defaultValue = "idCampus") String sortBy,
+                                                    @RequestParam(defaultValue = "asc") String sortOrder) {
+        return campusService.findAllP(pageNumber, pageSize, sortBy, sortOrder);
     }
 
     @GetMapping("/codigou/{idCodigoU}")

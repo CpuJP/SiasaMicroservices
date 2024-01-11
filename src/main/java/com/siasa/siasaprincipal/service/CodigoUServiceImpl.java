@@ -8,6 +8,10 @@ import com.siasa.siasaprincipal.repository.*;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeMap;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -55,6 +59,24 @@ public class CodigoUServiceImpl implements CodigoUService{
         } else {
             log.warn("No hay datos en la tabla codigoU");
             throw new MessageNotFoundException("No hay datos en la tabla codigoU");
+        }
+    }
+
+    @Override
+    public ResponseEntity<Page<CodigoUDto>> findAllP(int pageNumber, int pageSize, String sortBy, String sortOrder) {
+        Sort sort = sortOrder.equalsIgnoreCase(Sort.Direction.ASC.name()) ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
+        Pageable pageable = PageRequest.of(pageNumber, pageSize, sort);
+        Page<CodigoU> codigoUPage = codigoURepository.findAll(pageable);
+        if (codigoUPage.hasContent()) {
+            Page<CodigoUDto> codigoUDtoPage = codigoUPage.map(codigoU -> {
+                TypeMap<CodigoU, CodigoUDto> typeMap = modelMapper.typeMap(CodigoU.class, CodigoUDto.class);
+                typeMap.addMapping(CodigoU::getRfid, CodigoUDto::setRfidDto);
+                return typeMap.map(codigoU);
+            });
+            return new ResponseEntity<>(codigoUDtoPage, HttpStatus.OK);
+        } else {
+            log.warn("No hay datos en la tabla codigou");
+            throw new MessageNotFoundException("No hay datos en la tabla codigou");
         }
     }
 
