@@ -1,5 +1,7 @@
 package com.siasa.prestamos.dto;
 
+import jakarta.persistence.Column;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
@@ -17,6 +19,11 @@ public class PrestamoAudioVisualDTO implements Serializable {
 
     private String nota;
 
+    private String observaciones;
+
+    @NotNull
+    private String idRfid;
+
     @NotNull
     private String idUdec;
 
@@ -25,6 +32,10 @@ public class PrestamoAudioVisualDTO implements Serializable {
 
     @NotNull
     private String apellido;
+
+    @NotNull
+    @Min(value = 1)
+    private Integer cantidad;
 
     @NotNull
     private InventarioAudioVisualDTO inventarioAudioVisualDTO;

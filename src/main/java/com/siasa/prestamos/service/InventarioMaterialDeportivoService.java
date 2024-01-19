@@ -11,6 +11,7 @@ public interface InventarioMaterialDeportivoService {
 
     ResponseEntity<List<InventarioMaterialDeportivoDTO>> findAll();
 
+
     ResponseEntity<List<InventarioMaterialDeportivoDTO>> findByNombre(@PathVariable String nombre);
 
     ResponseEntity<InventarioMaterialDeportivoDTO> create(@RequestBody InventarioMaterialDeportivoDTO materialDeportivoDTO);

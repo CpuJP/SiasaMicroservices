@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>com.siasa</groupId>
 	<artifactId>siasa-prestamos</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>1.0-BETA</version>
 	<name>siasa-prestamos</name>
 	<description>Demo project for Spring Boot</description>
 	<properties>
