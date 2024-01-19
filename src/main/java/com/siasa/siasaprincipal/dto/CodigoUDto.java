@@ -1,6 +1,5 @@
 package com.siasa.siasaprincipal.dto;
 
-import com.siasa.siasaprincipal.entity.Rfid;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 

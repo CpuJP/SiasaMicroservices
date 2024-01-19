@@ -1,10 +1,8 @@
 package com.siasa.siasaprincipal.controller;
 
-import com.siasa.siasaprincipal.dto.BibliotecaDto;
 import com.siasa.siasaprincipal.dto.ErrorResponseDto;
 import com.siasa.siasaprincipal.dto.RfidDto;
 import com.siasa.siasaprincipal.service.RfidService;
-//import io.swagger.v3.oas.annotations.OpenAPI31;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
@@ -88,7 +86,7 @@ public class RfidController {
     }
 
     //se crea el endpoint post con la ruta /{id} donde se envia el id desde la api al server
-    @PostMapping("/{id}")
+    @GetMapping("/{id}")
     @Operation(summary = "Find Rfid by Id",
         responses = {
             @ApiResponse(responseCode = "200", description = "OK - Datos encontrados",
