@@ -163,4 +163,62 @@ public class LaboratorioServiceImpl implements LaboratorioService{
             throw new MessageNotFoundException(String.format("La persona con código %s NO registra ingresos al laboratorio", idCodigoU));
         }
     }
+
+    @Override
+    public ResponseEntity<List<LaboratorioDto>> findByFechaIngreso(LocalDateTime fechaInicial, LocalDateTime fechaFinal) {
+        List<Laboratorio> laboratorios = laboratorioRepository.findLaboratoriosByFechaIngresoBetween(fechaInicial, fechaFinal);
+        if (!laboratorios.isEmpty()) {
+            List<LaboratorioDto> laboratorioDtos = laboratorios.stream()
+                    .map(this::mapToDto)
+                    .collect(Collectors.toList());
+            return new ResponseEntity<>(laboratorioDtos, HttpStatus.OK);
+        } else {
+            throw new MessageNotFoundException(String.format("NO hay registro de ingresos en el rango de fecha declaradas, desde: %tF %tR, hasta: %tF %tR", fechaInicial, fechaInicial, fechaFinal, fechaFinal));
+        }
+    }
+
+    @Override
+    public ResponseEntity<List<LaboratorioDto>> findByFechaSalida(LocalDateTime fechaInicial, LocalDateTime fechaFinal) {
+        List<Laboratorio> laboratorios = laboratorioRepository.findLaboratoriosByFechaSalidaBetween(fechaInicial, fechaFinal);
+        if (!laboratorios.isEmpty()) {
+            List<LaboratorioDto> laboratorioDtos = laboratorios.stream()
+                    .map(this::mapToDto)
+                    .collect(Collectors.toList());
+            return new ResponseEntity<>(laboratorioDtos, HttpStatus.OK);
+        } else {
+            throw new MessageNotFoundException(String.format("NO hay registro de ingresos en el rango de fecha declaradas, desde: %tF %tR, hasta: %tF %tR", fechaInicial, fechaInicial, fechaFinal, fechaFinal));
+        }
+    }
+
+    @Override
+    public ResponseEntity<List<LaboratorioDto>> findByIdCodigoUAndFechaIngreso(String idCodigoU, LocalDateTime fechaInicial, LocalDateTime fechaFinal) {
+        if(!codigoURepository.existsById(idCodigoU)) {
+            throw new MessageBadRequestException(String.format("La persona con el código %s no existe en base de datos", idCodigoU));
+        }
+        List<Laboratorio> laboratorios = laboratorioRepository.findLaboratoriosByCodigoUIdCodigoUAndFechaIngresoBetween(idCodigoU, fechaInicial, fechaFinal);
+        if (!laboratorios.isEmpty()) {
+            List<LaboratorioDto> laboratorioDtos = laboratorios.stream()
+                    .map(this::mapToDto)
+                    .collect(Collectors.toList());
+            return new ResponseEntity<>(laboratorioDtos, HttpStatus.OK);
+        } else {
+            throw new MessageNotFoundException(String.format("NO hay registro de ingresos para el usuario con ID UDEC %s en el rango de fecha declaradas, desde: %tF %tR, hasta: %tF %tR", idCodigoU, fechaInicial, fechaInicial, fechaFinal, fechaFinal));
+        }
+    }
+
+    @Override
+    public ResponseEntity<List<LaboratorioDto>> findByIdCodigoUAndFechaSalida(String idCodigoU, LocalDateTime fechaInicial, LocalDateTime fechaFinal) {
+        if(!codigoURepository.existsById(idCodigoU)) {
+            throw new MessageBadRequestException(String.format("La persona con el código %s no existe en base de datos", idCodigoU));
+        }
+        List<Laboratorio> laboratorios = laboratorioRepository.findLaboratoriosByCodigoUIdCodigoUAndFechaSalidaBetween(idCodigoU, fechaInicial, fechaFinal);
+        if (!laboratorios.isEmpty()) {
+            List<LaboratorioDto> laboratorioDtos = laboratorios.stream()
+                    .map(this::mapToDto)
+                    .collect(Collectors.toList());
+            return new ResponseEntity<>(laboratorioDtos, HttpStatus.OK);
+        } else {
+            throw new MessageNotFoundException(String.format("NO hay registro de ingresos para el usuario con ID UDEC %s en el rango de fecha declaradas, desde: %tF %tR, hasta: %tF %tR", idCodigoU, fechaInicial, fechaInicial, fechaFinal, fechaFinal));
+        }
+    }
 }

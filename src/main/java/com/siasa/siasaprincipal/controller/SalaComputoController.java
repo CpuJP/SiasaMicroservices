@@ -16,6 +16,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -159,5 +160,113 @@ public class SalaComputoController {
                 in = ParameterIn.PATH, example = "MN:0L:AA:8T", schema = @Schema(type = "string"))
             @PathVariable String idRfid) {
         return salaComputoService.createOut(idRfid);
+    }
+
+    @GetMapping("/fechaingreso")
+    @Operation(summary = "Get all access to the Sala Cómputo by fechaIngreso",
+        responses = {
+            @ApiResponse(responseCode = "200", description = "OK - Datos traidos exitosamente",
+                content = @Content(mediaType = "application/json",
+                    array = @ArraySchema(schema = @Schema(implementation = SalaComputoDto.class)))),
+            @ApiResponse(responseCode = "404", description = "Not Found - No hay datos en la lista",
+                content = @Content(mediaType = "application/json",
+                    schema = @Schema(implementation = ErrorResponseDto.class))),
+            @ApiResponse(responseCode = "500", description = "Internal Server Error - Error interno del servidor",
+                    content = @Content(schema = @Schema(hidden = true)))
+        },
+        parameters = {
+            @Parameter(name = "fechaInicial", description = "Fecha inicial para hacer el filtrado",
+                in = ParameterIn.QUERY, example = "2024-01-01T12:00:00", schema = @Schema(type = "date-time")),
+            @Parameter(name = "fechaFinal", description = "Fecha final del rango para hacer el filtrado",
+                in = ParameterIn.QUERY, example = "2024-01-22T12:00:00", schema = @Schema(type = "data-time"))
+        }
+    )
+    public ResponseEntity<List<SalaComputoDto>> findByFechaIngreso(@RequestParam LocalDateTime fechaInicial,
+                                                                   @RequestParam LocalDateTime fechaFinal) {
+        return salaComputoService.findByFechaIngreso(fechaInicial, fechaFinal);
+    }
+
+    @GetMapping("/fechasalida")
+    @Operation(summary = "Get all access to the Sala Cómputo by fechaSalida",
+        responses = {
+            @ApiResponse(responseCode = "200", description = "OK - Datos traidos exitosamente",
+                    content = @Content(mediaType = "application/json",
+                            array = @ArraySchema(schema = @Schema(implementation = SalaComputoDto.class)))),
+            @ApiResponse(responseCode = "404", description = "Not Found - No hay datos en la lista",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponseDto.class))),
+            @ApiResponse(responseCode = "500", description = "Internal Server Error - Error interno del servidor",
+                    content = @Content(schema = @Schema(hidden = true)))
+        },
+        parameters = {
+            @Parameter(name = "fechaInicial", description = "Fecha inicial para hacer el filtrado",
+                    in = ParameterIn.QUERY, example = "2024-01-01T12:00:00", schema = @Schema(type = "date-time")),
+            @Parameter(name = "fechaFinal", description = "Fecha final del rango para hacer el filtrado",
+                    in = ParameterIn.QUERY, example = "2024-01-22T12:00:00", schema = @Schema(type = "data-time"))
+        }
+    )
+    public ResponseEntity<List<SalaComputoDto>> findByFechaSalida(@RequestParam LocalDateTime fechaInicial,
+                                                                  @RequestParam LocalDateTime fechaFinal) {
+        return salaComputoService.findByFechaSalida(fechaInicial, fechaFinal);
+    }
+
+    @GetMapping("/idcodigouandfechaingreso")
+    @Operation(summary = "Get all access to the Sala Cómputo by idCodigoU and fechaIngreso",
+        responses = {
+            @ApiResponse(responseCode = "200", description = "OK - Datos traidos exitosamente",
+                    content = @Content(mediaType = "application/json",
+                            array = @ArraySchema(schema = @Schema(implementation = SalaComputoDto.class)))),
+            @ApiResponse(responseCode = "400", description = "Bad Request - ID UDEC no registra",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponseDto.class))),
+            @ApiResponse(responseCode = "404", description = "Not Found - No hay datos en la lista",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponseDto.class))),
+            @ApiResponse(responseCode = "500", description = "Internal Server Error - Error interno del servidor",
+                    content = @Content(schema = @Schema(hidden = true)))
+        },
+        parameters = {
+            @Parameter(name = "idCodigoU", description = "ID UDEC de usuario para el filtrado",
+                in = ParameterIn.QUERY, example = "461220134", schema = @Schema(type = "string")),
+            @Parameter(name = "fechaInicial", description = "Fecha inicial para hacer el filtrado",
+                in = ParameterIn.QUERY, example = "2024-01-01T12:00:00", schema = @Schema(type = "date-time")),
+            @Parameter(name = "fechaFinal", description = "Fecha final del rango para hacer el filtrado",
+                in = ParameterIn.QUERY, example = "2024-01-22T12:00:00", schema = @Schema(type = "data-time"))
+        }
+    )
+    public ResponseEntity<List<SalaComputoDto>> findByIdCodigoUAndFechaIngreso(@RequestParam String idCodigoU,
+                                                                               @RequestParam LocalDateTime fechaInicial,
+                                                                               @RequestParam LocalDateTime fechaFinal) {
+        return salaComputoService.findByIdCodigoUAndFechaIngreso(idCodigoU, fechaInicial, fechaFinal);
+    }
+
+    @GetMapping("/idcodigouandfechasalida")
+    @Operation(summary = "Get all access to the Sala Cómputo by idCodigoU and fechaSalida",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "OK - Datos traidos exitosamente",
+                            content = @Content(mediaType = "application/json",
+                                    array = @ArraySchema(schema = @Schema(implementation = SalaComputoDto.class)))),
+                    @ApiResponse(responseCode = "400", description = "Bad Request - ID UDEC no registra",
+                            content = @Content(mediaType = "application/json",
+                                    schema = @Schema(implementation = ErrorResponseDto.class))),
+                    @ApiResponse(responseCode = "404", description = "Not Found - No hay datos en la lista",
+                            content = @Content(mediaType = "application/json",
+                                    schema = @Schema(implementation = ErrorResponseDto.class))),
+                    @ApiResponse(responseCode = "500", description = "Internal Server Error - Error interno del servidor",
+                            content = @Content(schema = @Schema(hidden = true)))
+            },
+            parameters = {
+                    @Parameter(name = "idCodigoU", description = "ID UDEC de usuario para el filtrado",
+                            in = ParameterIn.QUERY, example = "461220134", schema = @Schema(type = "string")),
+                    @Parameter(name = "fechaInicial", description = "Fecha inicial para hacer el filtrado",
+                            in = ParameterIn.QUERY, example = "2024-01-01T12:00:00", schema = @Schema(type = "date-time")),
+                    @Parameter(name = "fechaFinal", description = "Fecha final del rango para hacer el filtrado",
+                            in = ParameterIn.QUERY, example = "2024-01-22T12:00:00", schema = @Schema(type = "data-time"))
+            }
+    )
+    public ResponseEntity<List<SalaComputoDto>> findByIdCodigoUAndFechaSalida(@RequestParam String idCodigoU,
+                                                                              @RequestParam LocalDateTime fechaInicial,
+                                                                              @RequestParam LocalDateTime fechaFinal) {
+        return salaComputoService.findByIdCodigoUAndFechaSalida(idCodigoU, fechaInicial, fechaFinal);
     }
 }

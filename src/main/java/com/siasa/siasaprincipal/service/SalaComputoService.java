@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface SalaComputoService {
@@ -24,4 +25,18 @@ public interface SalaComputoService {
     ResponseEntity<SalaComputoDto> createOut(@PathVariable String idRfid);
 
     ResponseEntity<String> existsByCodigoUIdCodigoU(@PathVariable String idCodigoU);
+
+    ResponseEntity<List<SalaComputoDto>> findByFechaIngreso(@RequestParam LocalDateTime fechaInicial,
+                                                            @RequestParam LocalDateTime fechaFinal);
+
+    ResponseEntity<List<SalaComputoDto>> findByFechaSalida(@RequestParam LocalDateTime fechaInicial,
+                                                           @RequestParam LocalDateTime fechaFinal);
+
+    ResponseEntity<List<SalaComputoDto>> findByIdCodigoUAndFechaIngreso(@RequestParam String idCodigoU,
+                                                                        @RequestParam LocalDateTime fechaInicial,
+                                                                        @RequestParam LocalDateTime fechaFinal);
+
+    ResponseEntity<List<SalaComputoDto>> findByIdCodigoUAndFechaSalida(@RequestParam String idCodigoU,
+                                                                       @RequestParam LocalDateTime fechaInicial,
+                                                                       @RequestParam LocalDateTime fechaFinal);
 }

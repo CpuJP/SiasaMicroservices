@@ -1,6 +1,7 @@
 package com.siasa.siasaprincipal.controller;
 
 import com.siasa.siasaprincipal.dto.BibliotecaDto;
+import com.siasa.siasaprincipal.dto.CampusDto;
 import com.siasa.siasaprincipal.dto.ErrorResponseDto;
 import com.siasa.siasaprincipal.service.BibliotecaService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -15,6 +16,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -132,5 +134,57 @@ public class BibliotecaController {
                 in = ParameterIn.PATH, example = "MN:0L:AA:8T", schema = @Schema(type = "string"))
             @PathVariable String idRfid) {
         return bibliotecaService.create(idRfid);
+    }
+
+    @GetMapping("/fechaingreso")
+    @Operation(summary = "Get all access to the Biblioteca By fechaIngreso",
+        responses = {
+                @ApiResponse(responseCode = "200", description = "OK - Datos traidos exitosamente",
+                        content = @Content(mediaType = "application/json",
+                                array = @ArraySchema(schema = @Schema(implementation = BibliotecaDto.class)))),
+                @ApiResponse(responseCode = "404", description = "Not Found - No hay datos en la lista",
+                        content = @Content(mediaType = "application/json",
+                                schema = @Schema(implementation = ErrorResponseDto.class))),
+                @ApiResponse(responseCode = "500", description = "Internal Server Error - Error interno del servidor",
+                        content = @Content(schema = @Schema(hidden = true)))
+        },
+        parameters = {
+                @Parameter(name = "fechaInicial", description = "Fecha inicial para hacer el filtrado",
+                        in = ParameterIn.QUERY, example = "2024-01-01T12:00:00", schema = @Schema(type = "date-time")),
+                @Parameter(name = "fechaFinal", description = "Fecha final del rango para hacer el filtrado",
+                        in = ParameterIn.QUERY, example = "2024-01-22T12:00:00", schema = @Schema(type = "data-time"))
+        })
+    public ResponseEntity<List<BibliotecaDto>> findByFechaIngreso(@RequestParam LocalDateTime fechaInicial,
+                                                                  @RequestParam LocalDateTime fechaFinal) {
+        return bibliotecaService.findByFechaIngreso(fechaInicial, fechaFinal);
+    }
+
+    @GetMapping("/idcodigouandfechaingreso")
+    @Operation(summary = "Get all access to the Biblioteca By idCodigoU and fechaIngreso",
+        responses = {
+                @ApiResponse(responseCode = "200", description = "OK - Datos traidos exitosamente",
+                        content = @Content(mediaType = "application/json",
+                                array = @ArraySchema(schema = @Schema(implementation = BibliotecaDto.class)))),
+                @ApiResponse(responseCode = "400", description = "Bad Request - ID UDEC no registra",
+                        content = @Content(mediaType = "application/json",
+                                schema = @Schema(implementation = ErrorResponseDto.class))),
+                @ApiResponse(responseCode = "404", description = "Not Found - No hay datos en la lista",
+                        content = @Content(mediaType = "application/json",
+                                schema = @Schema(implementation = ErrorResponseDto.class))),
+                @ApiResponse(responseCode = "500", description = "Internal Server Error - Error interno del servidor",
+                        content = @Content(schema = @Schema(hidden = true)))
+        },
+        parameters = {
+                @Parameter(name = "idCodigoU", description = "ID UDEC de usuario para el filtrado",
+                        in = ParameterIn.QUERY, example = "461220134", schema = @Schema(type = "string")),
+                @Parameter(name = "fechaInicial", description = "Fecha inicial para hacer el filtrado",
+                        in = ParameterIn.QUERY, example = "2024-01-01T12:00:00", schema = @Schema(type = "date-time")),
+                @Parameter(name = "fechaFinal", description = "Fecha final del rango para hacer el filtrado",
+                        in = ParameterIn.QUERY, example = "2024-01-22T12:00:00", schema = @Schema(type = "data-time"))
+        })
+    public ResponseEntity<List<BibliotecaDto>> findByIdCodigoUAndFechaIngreso(@RequestParam String idCodigoU,
+                                                                              @RequestParam LocalDateTime fechaInicial,
+                                                                              @RequestParam LocalDateTime fechaFinal) {
+        return bibliotecaService.findByIdCodigoUAndFechaIngreso(idCodigoU, fechaInicial, fechaFinal);
     }
 }

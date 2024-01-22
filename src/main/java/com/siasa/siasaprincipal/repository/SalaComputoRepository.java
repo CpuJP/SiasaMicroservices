@@ -1,12 +1,14 @@
 package com.siasa.siasaprincipal.repository;
 
 import com.siasa.siasaprincipal.entity.SalaComputo;
+import org.springframework.cglib.core.Local;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -25,4 +27,16 @@ public interface SalaComputoRepository extends JpaRepository<SalaComputo, Intege
 
     @Transactional(readOnly = false)
     void deleteAllByCodigoUIdCodigoU(String idCodigoU);
+
+    @Transactional(readOnly = true)
+    List<SalaComputo> findSalaComputosByFechaIngresoBetween(LocalDateTime fechaInicial, LocalDateTime fechaFinal);
+
+    @Transactional(readOnly = true)
+    List<SalaComputo> findSalaComputosByFechaSalidaBetween(LocalDateTime fechaInicial, LocalDateTime fechaFinal);
+
+    @Transactional(readOnly = true)
+    List<SalaComputo> findSalaComputosByCodigoUIdCodigoUAndFechaIngresoBetween(String idCodigoU, LocalDateTime fechaInicial, LocalDateTime fechaFinal);
+
+    @Transactional(readOnly = true)
+    List<SalaComputo> findSalaComputosByCodigoUIdCodigoUAndFechaSalidaBetween(String idCodigoU, LocalDateTime fechaInicial, LocalDateTime fechaFinal);
 }

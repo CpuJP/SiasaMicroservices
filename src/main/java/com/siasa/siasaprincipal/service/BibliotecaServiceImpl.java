@@ -135,4 +135,33 @@ public class BibliotecaServiceImpl implements BibliotecaService{
             throw new MessageNotFoundException(String.format("La persona con código %s NO registra ingresos a la biblioteca", idCodigoU));
         }
     }
+
+    @Override
+    public ResponseEntity<List<BibliotecaDto>> findByFechaIngreso(LocalDateTime fechaInicial, LocalDateTime fechaFinal) {
+        List<Biblioteca> bibliotecas = bibliotecaRepository.findBibliotecasByFechaIngresoBetween(fechaInicial, fechaFinal);
+        if (!bibliotecas.isEmpty()) {
+            List<BibliotecaDto> bibliotecaDtos = bibliotecas.stream()
+                    .map(this::matToDto)
+                    .collect(Collectors.toList());
+            return new ResponseEntity<>(bibliotecaDtos, HttpStatus.OK);
+        } else {
+            throw new MessageNotFoundException(String.format("NO hay registro de ingresos en el rango de fecha declaradas, desde: %tF %tR, hasta: %tF %tR", fechaInicial, fechaInicial, fechaFinal, fechaFinal));
+        }
+    }
+
+    @Override
+    public ResponseEntity<List<BibliotecaDto>> findByIdCodigoUAndFechaIngreso(String idCodigoU, LocalDateTime fechaInicial, LocalDateTime fechaFinal) {
+        if (!codigoURepository.existsById(idCodigoU)) {
+            throw new MessageNotFoundException(String.format("La persona con el código %s no existe en base de datos", idCodigoU));
+        }
+        List<Biblioteca> bibliotecas = bibliotecaRepository.findBibliotecasByCodigoUIdCodigoUAndFechaIngresoBetween(idCodigoU, fechaInicial, fechaFinal);
+        if (!bibliotecas.isEmpty()) {
+            List<BibliotecaDto> bibliotecaDtos = bibliotecas.stream()
+                    .map(this::matToDto)
+                    .collect(Collectors.toList());
+            return new ResponseEntity<>(bibliotecaDtos, HttpStatus.OK);
+        } else {
+            throw new MessageNotFoundException(String.format("NO hay registro de ingresos para el usuario con ID UDEC %s en el rango de fecha declaradas, desde: %tF %tR, hasta: %tF %tR", idCodigoU, fechaInicial, fechaInicial, fechaFinal, fechaFinal));
+        }
+    }
 }

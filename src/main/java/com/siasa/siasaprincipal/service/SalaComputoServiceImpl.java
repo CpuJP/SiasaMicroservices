@@ -162,4 +162,62 @@ public class SalaComputoServiceImpl implements SalaComputoService{
             throw new MessageNotFoundException(String.format("La persona con código %s NO registra ingresos a la sala de cómputo", idCodigoU));
         }
     }
+
+    @Override
+    public ResponseEntity<List<SalaComputoDto>> findByFechaIngreso(LocalDateTime fechaInicial, LocalDateTime fechaFinal) {
+        List<SalaComputo> salaComputos = salaComputoRepository.findSalaComputosByFechaIngresoBetween(fechaInicial, fechaFinal);
+        if (!salaComputos.isEmpty()) {
+            List<SalaComputoDto> salaComputoDtos = salaComputos.stream()
+                    .map(this::mapToDto)
+                    .collect(Collectors.toList());
+            return new ResponseEntity<>(salaComputoDtos, HttpStatus.OK);
+        } else {
+            throw new MessageNotFoundException(String.format("NO hay registro de ingresos en el rango de fecha declaradas, desde: %tF %tR, hasta: %tF %tR", fechaInicial, fechaInicial, fechaFinal, fechaFinal));
+        }
+    }
+
+    @Override
+    public ResponseEntity<List<SalaComputoDto>> findByFechaSalida(LocalDateTime fechaInicial, LocalDateTime fechaFinal) {
+        List<SalaComputo> salaComputos = salaComputoRepository.findSalaComputosByFechaSalidaBetween(fechaInicial, fechaFinal);
+        if (!salaComputos.isEmpty()) {
+            List<SalaComputoDto> salaComputoDtos = salaComputos.stream()
+                    .map(this::mapToDto)
+                    .collect(Collectors.toList());
+            return new ResponseEntity<>(salaComputoDtos, HttpStatus.OK);
+        } else {
+            throw new MessageNotFoundException(String.format("NO hay registro de ingresos en el rango de fecha declaradas, desde: %tF %tR, hasta: %tF %tR", fechaInicial, fechaInicial, fechaFinal, fechaFinal));
+        }
+    }
+
+    @Override
+    public ResponseEntity<List<SalaComputoDto>> findByIdCodigoUAndFechaIngreso(String idCodigoU, LocalDateTime fechaInicial, LocalDateTime fechaFinal) {
+        if (!codigoURepository.existsById(idCodigoU)) {
+            throw new MessageBadRequestException(String.format("La persona con el código %s no existe en base de datos", idCodigoU));
+        }
+        List<SalaComputo> salaComputos = salaComputoRepository.findSalaComputosByCodigoUIdCodigoUAndFechaIngresoBetween(idCodigoU, fechaInicial, fechaFinal);
+        if (!salaComputos.isEmpty()) {
+            List<SalaComputoDto> salaComputoDtos = salaComputos.stream()
+                    .map(this::mapToDto)
+                    .collect(Collectors.toList());
+            return new ResponseEntity<>(salaComputoDtos, HttpStatus.OK);
+        } else {
+            throw new MessageNotFoundException(String.format("NO hay registro de ingresos para el usuario con ID UDEC %s en el rango de fecha declaradas, desde: %tF %tR, hasta: %tF %tR", idCodigoU, fechaInicial, fechaInicial, fechaFinal, fechaFinal));
+        }
+    }
+
+    @Override
+    public ResponseEntity<List<SalaComputoDto>> findByIdCodigoUAndFechaSalida(String idCodigoU, LocalDateTime fechaInicial, LocalDateTime fechaFinal) {
+        if (!codigoURepository.existsById(idCodigoU)) {
+            throw new MessageBadRequestException(String.format("La persona con el código %s no existe en base de datos", idCodigoU));
+        }
+        List<SalaComputo> salaComputos = salaComputoRepository.findSalaComputosByCodigoUIdCodigoUAndFechaSalidaBetween(idCodigoU, fechaInicial, fechaFinal);
+        if (!salaComputos.isEmpty()) {
+            List<SalaComputoDto> salaComputoDtos = salaComputos.stream()
+                    .map(this::mapToDto)
+                    .collect(Collectors.toList());
+            return new ResponseEntity<>(salaComputoDtos, HttpStatus.OK);
+        } else {
+            throw new MessageNotFoundException(String.format("NO hay registro de ingresos para el usuario con ID UDEC %s en el rango de fecha declaradas, desde: %tF %tR, hasta: %tF %tR", idCodigoU, fechaInicial, fechaInicial, fechaFinal, fechaFinal));
+        }
+    }
 }

@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository
@@ -23,4 +24,10 @@ public interface BibliotecaRepository extends JpaRepository<Biblioteca, Integer>
 
     @Transactional(readOnly = false)
     void deleteAllByCodigoUIdCodigoU(String idCodigoU);
+
+    @Transactional(readOnly = true)
+    List<Biblioteca> findBibliotecasByFechaIngresoBetween(LocalDateTime fechaInicial, LocalDateTime fechaFinal);
+
+    @Transactional(readOnly = true)
+    List<Biblioteca> findBibliotecasByCodigoUIdCodigoUAndFechaIngresoBetween(String idCodigoU, LocalDateTime fechaInicial, LocalDateTime fechaFinal);
 }

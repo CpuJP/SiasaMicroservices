@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -25,4 +26,16 @@ public interface LaboratorioRepository extends JpaRepository<Laboratorio, Intege
 
     @Transactional(readOnly = false)
     void deleteAllByCodigoUIdCodigoU(String idCodigoU);
+
+    @Transactional(readOnly = true)
+    List<Laboratorio> findLaboratoriosByFechaIngresoBetween(LocalDateTime fechaInicial, LocalDateTime fechaFinal);
+
+    @Transactional(readOnly = true)
+    List<Laboratorio> findLaboratoriosByFechaSalidaBetween(LocalDateTime fechaInicial, LocalDateTime fechaFinal);
+
+    @Transactional(readOnly = true)
+    List<Laboratorio> findLaboratoriosByCodigoUIdCodigoUAndFechaIngresoBetween(String idCodigoU, LocalDateTime fechaIncial, LocalDateTime fechaFinal);
+
+    @Transactional(readOnly = true)
+    List<Laboratorio> findLaboratoriosByCodigoUIdCodigoUAndFechaSalidaBetween(String idCodigoU, LocalDateTime fechaIncial, LocalDateTime fechaFinal);
 }

@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface CampusService {
@@ -22,4 +23,11 @@ public interface CampusService {
     ResponseEntity<CampusDto> create(@PathVariable String idRfid);
 
     ResponseEntity<String> existsByCodigoUIdCodigoU(@PathVariable String idCodigoU);
+
+    ResponseEntity<List<CampusDto>> findByFechaIngreso(@RequestParam LocalDateTime fechaInicial,
+                                                       @RequestParam LocalDateTime fechaFinal);
+
+    ResponseEntity<List<CampusDto>>findByIdCodigoUAndFechaIngreso(@RequestParam String idCodigoU,
+                                                                  @RequestParam LocalDateTime fechaInicial,
+                                                                  @RequestParam LocalDateTime fechaFinal);
 }

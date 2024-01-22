@@ -138,4 +138,33 @@ public class CampusServiceImpl implements CampusService{
             throw new MessageNotFoundException(String.format("La persona con código %s NO registra ingresos al campus", idCodigoU));
         }
     }
+
+    @Override
+    public ResponseEntity<List<CampusDto>> findByFechaIngreso(LocalDateTime fechaInicial, LocalDateTime fechaFinal) {
+        List<Campus> campusList = campusRepository.findCampusByFechaIngresoBetween(fechaInicial, fechaFinal);
+        if (!campusList.isEmpty()) {
+            List<CampusDto> campusDtos = campusList.stream()
+                    .map(this::mapToDto)
+                    .collect(Collectors.toList());
+            return new ResponseEntity<>(campusDtos, HttpStatus.OK);
+        } else {
+            throw new MessageNotFoundException(String.format("NO hay registro de ingresos en el rango de fecha declaradas, desde: %tF %tR, hasta: %tF %tR", fechaInicial, fechaInicial, fechaFinal, fechaFinal));
+        }
+    }
+
+    @Override
+    public ResponseEntity<List<CampusDto>> findByIdCodigoUAndFechaIngreso(String idCodigoU, LocalDateTime fechaInicial, LocalDateTime fechaFinal) {
+        if (!codigoURepository.existsById(idCodigoU)) {
+            throw new MessageNotFoundException(String.format("La persona con el código %s no existe en base de datos", idCodigoU));
+        }
+        List<Campus> campusList = campusRepository.findCampusByCodigoUIdCodigoUAndFechaIngresoBetween(idCodigoU, fechaInicial, fechaFinal);
+        if (!campusList.isEmpty()) {
+            List<CampusDto> campusDtos = campusList.stream()
+                    .map(this::mapToDto)
+                    .collect(Collectors.toList());
+            return new ResponseEntity<>(campusDtos, HttpStatus.OK);
+        } else {
+            throw new MessageNotFoundException(String.format("NO hay registro de ingresos para el usuario con ID UDEC %s en el rango de fecha declaradas, desde: %tF %tR, hasta: %tF %tR", idCodigoU, fechaInicial, fechaInicial, fechaFinal, fechaFinal));
+        }
+    }
 }

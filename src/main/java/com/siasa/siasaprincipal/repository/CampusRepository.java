@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 @Repository
 @EnableJpaRepositories
@@ -20,4 +21,8 @@ public interface CampusRepository extends JpaRepository<Campus, Integer>, JpaSpe
 
     @Transactional(readOnly = false)
     void deleteAllByCodigoUIdCodigoU(String idCodigoU);
+
+    List<Campus> findCampusByFechaIngresoBetween(LocalDateTime fechaInicial, LocalDateTime fechaFinal);
+
+    List<Campus> findCampusByCodigoUIdCodigoUAndFechaIngresoBetween(String idCodigoU, LocalDateTime fechaInicial, LocalDateTime fechaFinal);
 }
