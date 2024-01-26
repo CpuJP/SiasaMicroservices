@@ -10,6 +10,10 @@ import com.siasa.prestamos.repository.InventarioAudioVisualRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeMap;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -42,7 +46,21 @@ public class InventarioAudioVisualServiceImpl implements InventarioAudioVisualSe
 
         } else {
             log.warn("No hay datos en la tabla Inventario AudioVisuales");
-            throw new MessageNotContentException("No hay datos en la tabla Inventario AudioVisuales");
+            throw new MessageNotFoundException("No hay datos en la tabla Inventario AudioVisuales");
+        }
+    }
+
+    @Override
+    public ResponseEntity<Page<InventarioAudioVisualDTO>> findAllP(int pageNumber, int pageSize, String sortBy, String sortOrder) {
+        Sort sort = sortOrder.equalsIgnoreCase(Sort.Direction.ASC.name()) ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
+        Pageable pageable = PageRequest.of(pageNumber, pageSize, sort);
+        Page<InventarioAudioVisual> inventarioAudioVisualPage = audioVisualRepository.findAll(pageable);
+        if (inventarioAudioVisualPage.hasContent()) {
+            Page<InventarioAudioVisualDTO> inventarioAudioVisualDTOPage = inventarioAudioVisualPage.map(inventarioAudioVisual -> modelMapper.map(inventarioAudioVisual, InventarioAudioVisualDTO.class));
+            return new ResponseEntity<>(inventarioAudioVisualDTOPage, HttpStatus.OK);
+        } else {
+            log.warn("No hay datos en la tabla Inventario Audio Visuales");
+            throw new MessageNotFoundException("No hay datos en la tabla Inventario Audio Visuales");
         }
     }
 
@@ -56,7 +74,7 @@ public class InventarioAudioVisualServiceImpl implements InventarioAudioVisualSe
             return new ResponseEntity<>(audioVisualDTOS, HttpStatus.OK);
         } else {
             log.warn(String.format("No hay datos en el inventario que contengan el nombre %s", nombre));
-            throw new MessageBadRequestException(String.format("No hay datos en el inventario que contengan el nombre %s", nombre));
+            throw new MessageNotFoundException(String.format("No hay datos en el inventario que contengan el nombre %s", nombre));
         }
     }
 

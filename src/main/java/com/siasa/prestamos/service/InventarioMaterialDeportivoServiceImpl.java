@@ -10,6 +10,10 @@ import com.siasa.prestamos.repository.InventarioMaterialDeportivoRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeMap;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -42,7 +46,21 @@ public class InventarioMaterialDeportivoServiceImpl implements InventarioMateria
             return new ResponseEntity<>(deportivoDTOS, HttpStatus.OK);
         } else {
             log.warn("No hay datos en el inventario de Materiales Deportivos");
-            throw new MessageNotContentException("No hay datos en el inventario de Materiales Deportivos");
+            throw new MessageNotFoundException("No hay datos en el inventario de Materiales Deportivos");
+        }
+    }
+
+    @Override
+    public ResponseEntity<Page<InventarioMaterialDeportivoDTO>> findAllP(int pageNumber, int pageSize, String sortBy, String sortOrder) {
+        Sort sort = sortOrder.equalsIgnoreCase(Sort.Direction.ASC.name()) ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
+        Pageable pageable = PageRequest.of(pageNumber, pageSize, sort);
+        Page<InventarioMaterialDeportivo> materialDeportivoPage = inventarioMaterialDeportivoRepository.findAll(pageable);
+        if (materialDeportivoPage.hasContent()) {
+            Page<InventarioMaterialDeportivoDTO> materialDeportivoDTOPage = materialDeportivoPage.map(inventarioMaterialDeportivo -> modelMapper.map(inventarioMaterialDeportivo, InventarioMaterialDeportivoDTO.class));
+            return new ResponseEntity<>(materialDeportivoDTOPage, HttpStatus.OK);
+        } else {
+            log.warn("No hay datos en la tabla Inventario Material Deportivo");
+            throw new MessageNotFoundException("No hay datos en la tabla Inventario Material Deportivo");
         }
     }
 
@@ -56,7 +74,7 @@ public class InventarioMaterialDeportivoServiceImpl implements InventarioMateria
             return new ResponseEntity<>(materialDeportivoDTOS, HttpStatus.OK);
         } else {
             log.warn(String.format("No hay objetos en el inventario que contengan el nombre %s", nombre));
-            throw new MessageBadRequestException(String.format("No hay objetos en el inventario que contengan el nombre %s", nombre));
+            throw new MessageNotFoundException(String.format("No hay objetos en el inventario que contengan el nombre %s", nombre));
         }
     }
 
