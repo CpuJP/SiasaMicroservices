@@ -100,7 +100,7 @@ public class PrestamoMaterialDeportivoController {
                 @Parameter(name = "idRfid", description = "ID del carnet para realizar vinculación del objeto con la persona",
                         in = ParameterIn.QUERY, example = "MN:0L:AA:8T", schema = @Schema(type = "string")),
                 @Parameter(name = "nota", description = "Campo para agregar algún comentario al realizar el prestamo del objeto",
-                        in = ParameterIn.QUERY, example = "Control sin baterias", schema = @Schema(type = "string")),
+                        in = ParameterIn.QUERY, example = "Balón con un chichón", schema = @Schema(type = "string")),
                 @Parameter(name = "cantidad", description = "Cantidad del objeto en unidades para realizar el prestamo",
                         in = ParameterIn.QUERY, example = "3", schema = @Schema(type = "integer"))
         })
@@ -127,7 +127,7 @@ public class PrestamoMaterialDeportivoController {
                 @Parameter(name = "idPrestamoMaterialDeportivo", description = "Id del prestamo ya realizado para asignar la devolución",
                         in = ParameterIn.QUERY, example = "1", schema = @Schema(type = "integer")),
                 @Parameter(name = "observaciones", description = "Observaciones o anotaciones respecto al estado de la devolución del objeto",
-                        in = ParameterIn.QUERY, example = "Control dañado en una esquina", schema = @Schema(type = "string"))
+                        in = ParameterIn.QUERY, example = "Balón pinchado", schema = @Schema(type = "string"))
         })
     ResponseEntity<PrestamoMaterialDeportivoDTO> createOut(@RequestParam Integer idPrestamoMaterialDeportivo,
                                                            @RequestParam(required = false) String observaciones) {
