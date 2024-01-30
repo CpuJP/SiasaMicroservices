@@ -304,7 +304,7 @@ public class PrestamoAudioVisualServiceImpl implements PrestamoAudioVisualServic
             return getListResponseEntity(prestamoAudioVisuals);
         } else {
             log.warn(String.format("No hay prestamos sobre el objeto que contiene el nombre %s", nombreObjeto));
-            throw new MessageBadRequestException(String.format("No hay prestamos sobre el objeto que contiene el nombre %s", nombreObjeto));
+            throw new MessageNotFoundException(String.format("No hay prestamos sobre el objeto que contiene el nombre %s", nombreObjeto));
         }
     }
 
