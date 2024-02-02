@@ -21,6 +21,10 @@ This microservice handles six different reports:
 6. **Sports Equipment Loan Reports -> Reportes Préstamos Material Deportivo**: Allows you to see statistical reports regarding the status of the loans.
 
 
+## Main Information
+ - [Main Repository](https://github.com/CpuJP/SiasaMicroservices)
+
+
 ## Contribution
 
 If you wish to contribute to the development or improve this microservice, we invite you to do so! Please follow these guidelines:
