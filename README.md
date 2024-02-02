@@ -21,7 +21,7 @@ This microservice handles six different schemas:
 6. **RFID -> Rfid**: Facilitates the management of data related to radio frequency identification systems (RFID).
 
 
-## Main Infomration
+## Main Information
  - [Main Repository](https://github.com/CpuJP/SiasaMicroservices)
 
 
