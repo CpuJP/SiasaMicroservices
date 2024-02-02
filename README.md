@@ -20,8 +20,7 @@ This architecture handles different projects:
 
 2. **[siasa-prestamos](https://github.com/CpuJP/SiasaMicroservices/tree/siasa-prestamos) ->** This microservice is linked to a database completely independent of that of the main microservice, this microservice is in charge of the inventories and loans of university well-being (sports and audiovisual material).
 
-3.
-**[siasa-reportes](https://github.com/CpuJP/SiasaMicroservices/tree/siasa-reportes) ->** This microservice is linked to the two different databases (Siasa-Principal and Siasa-Prestamos), this microservice is responsible for generating reports with statistical data of interest to the different administrators of each area.
+3. **[siasa-reportes](https://github.com/CpuJP/SiasaMicroservices/tree/siasa-reportes) ->** This microservice is linked to the two different databases (Siasa-Principal and Siasa-Prestamos), this microservice is responsible for generating reports with statistical data of interest to the different administrators of each area.
 
 
 
