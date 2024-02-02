@@ -1,7 +1,7 @@
 # SiasaMicroservices
 Repository of the "PROPOSAL FOR AN INFORMATION SYSTEM FOR THE AUTOMATION OF ACADEMIC SERVICES AT THE UNIVERSITY OF CUNDINAMARCA FACATATIVÁ EXTENSION" of the thesis, consists of several microservices to solve the problems raised in the thesis.
 
-This microservice is a crucial component of the SIASA architecture, a project whose primary goal is to qualify for the title of Computer Systems Engineer. The microservice provides an interface for accessing and managing data related to various schemas.
+This microservice is a crucial component of the SIASA architecture, a project whose primary goal is to qualify for the title of Computer Systems Engineer. The microservice provides an interface to access and manage data related to the different loans in the areas of Sports and Audiovisual Equipment, contributing to the traceability of the objects in the different inventories.
 
 ## API Documentation
 
