@@ -44,14 +44,14 @@ The Docker Compose file ([docker-compose.yml](https://github.com/CpuJP/SiasaMicr
    ```
    
 2. Navigate to the directory containing the docker-compose.yml file
-  ```bash
+   ```bash
    cd SiasaMicroservices
-  ```
+   ```
 
-3.Run the following command to start the SIASA Microservices
-  ```bash
-  docker-compose up -d
-  ```
+3. Run the following command to start the SIASA Microservices
+   ```bash
+   docker-compose up -d
+   ```
 
 
 
