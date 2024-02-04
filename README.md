@@ -24,6 +24,42 @@ This architecture handles different projects:
 
 
 
+## Docker Compose for SIASA Microservices
+
+To deploy the backend infrastructure of the SIASA Microservices, you can use the provided Docker Compose configuration. This configuration includes all the necessary services and settings to run the microservices seamlessly.
+
+### Prerequisites
+
+Before using Docker Compose, make sure you have Docker and Docker Compose installed on your machine. You can download them from the official [Docker website](https://www.docker.com/get-started).
+
+### Docker Compose Configuration
+
+The Docker Compose file ([docker-compose.yml](https://github.com/CpuJP/SiasaMicroservices/blob/main/docker-compose.yml)) in this repository contains the necessary specifications to set up the SIASA Microservices infrastructure. It defines the services, networks, and configurations required for a smooth deployment.
+
+#### Usage
+
+1. Clone the repository: 
+   ```bash
+   git clone https://github.com/CpuJP/SiasaMicroservices.git
+   ```
+   
+2. Navigate to the directory containing the docker-compose.yml file
+  ```bash
+   cd SiasaMicroservices
+  ```
+
+3.Run the following command to start the SIASA Microservices
+  ```bash
+  docker-compose up -d
+  ```
+
+
+
+     
+     
+
+
+
 ## Contribution
 
 If you wish to contribute to the development or improve this microservice, we invite you to do so! Please follow these guidelines:
