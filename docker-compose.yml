@@ -1,0 +1,76 @@
+version: '3.9'
+
+services:
+  # -----SIASA-PRINCIPAL-----
+  #APP
+  siasa-principal-app:
+    container_name: siasa-principal-app #Nombre del contenedor que aparece en Docker
+    image: cpujuan/siasa-principal-app:1.1 #Imagen para cosntruir el servicio
+    build: . #Se construye desde la raíz
+    ports:
+      - 8484:8484 #Puerto de salida, Puerto interno del contenedor
+    environment:
+      - PROD_DB_HOST=siasa-principal-db #variable de entorno que consume el servicio (Host de la base de datos)
+      - PROD_DB_PORT=5432 #variable de entorno que consume el servicio (Puerto de conexión de la base de datos)
+      - PROD_DB_NAME=siasa-principal #variable de entorno que consume el servicio (Nombre de la base de datos)
+      - PROD_DB_USERNAME=postgres #variable de entorno que consume el servicio (Usuario de acceso a la base de datos)
+      - PROD_DB_PASSWORD=postgres #variable de entorno que consume el servicio (Contraseña de acceso a la base de datos)
+      - spring.profiles.active=prod #variable de entorno que consume el servicio (Activar la configuración de producción del servicio)
+      - TZ=America/Bogota #Variable de entorno para decirle al contenedor la zona horaria que debe seguir
+    depends_on:
+      - siasa-principal-db #Este contenedor depende de la base de datos para poder funcionar correctamente
+
+  #DATABASE
+  siasa-principal-db:
+    container_name: siasa-principal-db #Nombre del contenedor que aparece en Docker
+    image: postgres:16-alpine #Imagen para cosntruir el servicio
+    ports:
+      - 5432:5432 #Puerto de salida, Puerto interno del contenedor
+    environment:
+      POSTGRES_USER: postgres #Variables de entorno para la configuración de la base de datos (Usuario)
+      POSTGRES_PASSWORD: postgres #Variables de entorno para la configuración de la base de datos (Contraseña)
+      POSTGRES_DB: siasa-principal #Variables de entorno para la configuración de la base de datos (Nombre de la base de datos)
+      TZ: 'America/Bogota' #Variable de entorno para decirle al contenedor la zona horaria que debe seguir
+    volumes:
+      - postgres_data_principal:/var/lib/postgresql/data #Ruta para persistir datos sin importar si el contenedor se borra
+
+  # -----SIASA-PRESTAMOS-----
+  # APP
+  siasa-prestamos-app:
+    container_name: siasa-prestamos-app #Nombre del contenedor que aparece en Docker
+    image: cpujuan/siasa-prestamos-app:1.0 #Imagen para cosntruir el servicio
+    build: . #Se construye desde la raíz
+    ports:
+      - 8485:8485 #Puerto de salida, Puerto interno del contenedor
+    environment:
+      - PROD_P_DB_HOST=siasa-prestamos-db #variable de entorno que consume el servicio (Host de la base de datos)
+      - PROD_P_DB_PORT=5432 #variable de entorno que consume el servicio (Puerto de conexión de la base de datos)
+      - PROD_P_DB_NAME=siasa-prestamos #variable de entorno que consume el servicio (Nombre de la base de datos)
+      - PROD_P_DB_USERNAME=postgres #variable de entorno que consume el servicio (Usuario de acceso a la base de datos)
+      - PROD_P_DB_PASSWORD=postgres #variable de entorno que consume el servicio (Contraseña de acceso a la base de datos)
+      - spring.profiles.active=prod #variable de entorno que consume el servicio (Activar la configuración de producción del servicio)
+      - TZ=America/Bogota #Variable de entorno para decirle al contenedor la zona horaria que debe seguir
+      - API_SIASA_PRINCIPAL_BY_RFID=http://siasa-principal-app:8484/codigou/rfid/{idRfid} #variable de entorno que consume el servicio (Consumo API Externa)
+      - API_SIASA_EXISTS_RFID=http://siasa-principal-app:8484/rfid/{id} #variable de entorno que consume el servicio (Consumo API Externa)
+      - API_SIASA_EXISTS_UDEC=http://siasa-principal-app:8484/codigou/{id} #variable de entorno que consume el servicio (Consumo API Externa)
+    depends_on:
+      - siasa-prestamos-db #Este contenedor depende de la base de datos para poder funcionar correctamente
+      - siasa-principal-app #Este contenedor depende del contenedor derl servicio principal para funcionar correctamente
+
+  # DATABASE para SIASA-PRESTAMOS
+  siasa-prestamos-db:
+    container_name: siasa-prestamos-db #Nombre del contenedor que aparece en Docker
+    image: postgres:16-alpine #Imagen para cosntruir el servicio
+    ports:
+      - 5433:5432 #Puerto de salida, Puerto interno del contenedor
+    environment:
+      POSTGRES_USER: postgres #Variables de entorno para la configuración de la base de datos (Usuario)
+      POSTGRES_PASSWORD: postgres #Variables de entorno para la configuración de la base de datos (Contraseña)
+      POSTGRES_DB: siasa-prestamos #Variables de entorno para la configuración de la base de datos (Nombre de la base de datos)
+      TZ: 'America/Bogota' #Variable de entorno para decirle al contenedor la zona horaria que debe seguir
+    volumes:
+      - postgres_data_prestamos:/var/lib/postgresql/data #Ruta para persistir datos sin importar si el contenedor se borra
+
+volumes:
+  postgres_data_principal: #Se le informa docker-compose que debe tener una ruta para su creación
+  postgres_data_prestamos: #Se le informa docker-compose que debe tener una ruta para su creación
