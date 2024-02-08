@@ -5,7 +5,9 @@ import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.info.License;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
+@Configuration
 public class SwaggerConfig {
 
     //Se crea el Bean de configuracion de Swwagger Open API, para dar informacion relevante sobre las API's

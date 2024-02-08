@@ -4,6 +4,7 @@ import com.siasa.reportes.siasareportes.commons.JasperReportManager;
 import com.siasa.reportes.siasareportes.dto.ReportesDTO;
 import com.siasa.reportes.siasareportes.enums.TipoReporte;
 import com.siasa.reportes.siasareportes.exception.ReporteVacioException;
+import lombok.extern.slf4j.Slf4j;
 import net.sf.jasperreports.engine.JRException;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +18,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.Map;
 
 @Service
+@Slf4j
 public class ReportesServiceImpl implements ReportesService {
 
     private final JasperReportService reportService;
@@ -41,7 +43,8 @@ public class ReportesServiceImpl implements ReportesService {
         ByteArrayOutputStream stream = reportService.export(reportFileName, params.get("tipo").toString(), params,
                 dataSource.getConnection());
 
-        if (stream.size() == 0) {
+        if (stream.size() <= 911) {
+            log.warn("El informe esta vacío");
             throw new ReporteVacioException("El reporte está vacío");
         }
 
