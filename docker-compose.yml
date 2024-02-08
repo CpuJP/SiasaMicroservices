@@ -5,7 +5,7 @@ services:
   #APP
   siasa-principal-app:
     container_name: siasa-principal-app #Nombre del contenedor que aparece en Docker
-    image: cpujuan/siasa-principal-app:latest #Imagen para cosntruir el servicio (La ultima versión disponible)
+    image: cpujuan/siasa-principal-app:1.1 #Imagen para cosntruir el servicio
     build: . #Se construye desde la raíz
     ports:
       - 8484:8484 #Puerto de salida, Puerto interno del contenedor
@@ -38,7 +38,7 @@ services:
   # APP
   siasa-prestamos-app:
     container_name: siasa-prestamos-app #Nombre del contenedor que aparece en Docker
-    image: cpujuan/siasa-prestamos-app:latest #Imagen para cosntruir el servicio (La ultima versión disponible)
+    image: cpujuan/siasa-prestamos-app:1.0 #Imagen para cosntruir el servicio
     build: . #Se construye desde la raíz
     ports:
       - 8485:8485 #Puerto de salida, Puerto interno del contenedor
@@ -71,6 +71,25 @@ services:
     volumes:
       - postgres_data_prestamos:/var/lib/postgresql/data #Ruta para persistir datos sin importar si el contenedor se borra
 
+  # -----SIASA-REPORTES-----
+  # APP
+  siasa-reportes-app:
+    container_name: siasa-reportes-app #Nombre del contenedor que aparece en Docker
+    image: cpujuan/siasa-reportes-app:1.0 #Imagen para cosntruir el servicio
+    build: . #Se construye desde la raíz
+    ports:
+      - 8486:8486
+    environment:
+      - PROD_DB_HOST=siasa-principal-db #variable de entorno que consume el servicio (Host de la base de datos)
+      - PROD_DB_PORT=5432 #variable de entorno que consume el servicio (Puerto de conexión de la base de datos)
+      - PROD_DB_NAME=siasa-principal #variable de entorno que consume el servicio (Nombre de la base de datos)
+      - PROD_DB_USERNAME=postgres #variable de entorno que consume el servicio (Usuario de acceso a la base de datos)
+      - PROD_DB_PASSWORD=postgres #variable de entorno que consume el servicio (Contraseña de acceso a la base de datos)
+      - spring.profiles.active=prod #variable de entorno que consume el servicio (Activar la configuración de producción del servicio)
+      - TZ=America/Bogota #Variable de entorno para decirle al contenedor la zona horaria que debe seguir
+    depends_on:
+      - siasa-principal-db #Este contenedor depende de la base de datos para poder funcionar correctamente
+
 volumes:
   postgres_data_principal: #Se le informa docker-compose que debe tener una ruta para su creación
-  postgres_data_prestamos: #Se le informa docker-compose que debe tener una ruta para su creación
+  postgres_data_prestamos: #Se le informa docker-compose que debe tener una ruta para su creaciónñ
