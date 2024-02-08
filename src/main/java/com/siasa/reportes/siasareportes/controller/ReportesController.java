@@ -13,6 +13,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.extern.slf4j.Slf4j;
 import net.sf.jasperreports.engine.JRException;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
@@ -30,6 +31,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Map;
 
+@Slf4j
 @RestController
 @RequestMapping("/report")
 @Tag(name = "Reportes API", description = "Generación de reportes de las diferentes áreas de ingreso")
@@ -101,9 +103,11 @@ public class ReportesController {
                     return getResourceResponseEntity(params, dto);
                 } catch (ReporteVacioException ex) {
                     // Manejar el caso donde el reporte está vacío
+                    log.warn("Reporte vacío");
                     return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
                 } catch (Exception ex) {
                     // Manejar otros errores
+                    log.warn(ex.getMessage());
                     return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
                 }
 
@@ -277,6 +281,7 @@ public class ReportesController {
                     return getResourceResponseEntity(params, dto);
                 } catch (ReporteVacioException ex) {
                     // Manejar el caso donde el reporte está vacío
+
                     return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
                 } catch (Exception ex) {
                     // Manejar otros errores
