@@ -12,9 +12,9 @@ This microservice is a crucial component of the SIASA architecture, a project wh
 
 The API documentation is available at the following route, based on OpenAPI 3:
 
-- Swagger Siasa-Prinipal -> [/principal/swagger-ui/index.html](localhost:8487/principal/swagger-ui/index.html)
-- Swagger Siasa-Prestamos -> [/prestamos/swagger-ui/index.html](localhost:8487/prestamos/swagger-ui/index.html)
-- Swagger Siasa-Reportes -> [/reportes/swagger-ui/index.html](localhost:8487/reportes/swagger-ui/index.html)
+- Swagger Siasa-Prinipal -> [/principal/swagger-ui/index.html](http://localhost:8487/principal/swagger-ui/index.html)
+- Swagger Siasa-Prestamos -> [/prestamos/swagger-ui/index.html](http://localhost:8487/prestamos/swagger-ui/index.html)
+- Swagger Siasa-Reportes -> [/reportes/swagger-ui/index.html](http://localhost:8487/reportes/swagger-ui/index.html)
 
 
 ## Contribution
