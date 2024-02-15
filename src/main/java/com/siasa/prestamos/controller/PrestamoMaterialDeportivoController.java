@@ -23,7 +23,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/prestamomaterialdeportivo")
-@Tag(name = "Prestamo Material Deportivo", description = "Operaciones realcionadas con el control de datos de la trazabilidad de los prestamos")
+@Tag(name = "Prestamo Material Deportivo API", description = "Operaciones realcionadas con el control de datos de la trazabilidad de los prestamos")
 public class PrestamoMaterialDeportivoController {
 
     private final PrestamoMaterialDeportivoService prestamoMaterialDeportivoService;
