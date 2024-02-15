@@ -7,7 +7,7 @@ ENV LANG es_ES.UTF-8
 RUN apk add --update ttf-dejavu ttf-liberation ttf-droid && rm -rf /var/cache/apk/*
 
 # Copiar la aplicación
-COPY target/siasa-reportes-1.0-BETA.jar java-app.jar
+COPY target/siasa-reportes-1.1-BETA.jar java-app.jar
 
 # Agregar la fuente Arial Black al classpath de la JVM
 COPY src/main/resources/ariblk.ttf /usr/share/fonts/
