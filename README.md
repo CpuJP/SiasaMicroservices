@@ -17,8 +17,6 @@ This microservice handles six different reports:
 2. **Laboratory Reports -> Reportes Laboratorio**: Allows you to see statistical reports regarding admission.
 3. **Computer Room Reports -> Reportes Sala Cómputo**: Allows you to see statistical reports regarding admission.
 4. **Campus Reports -> Reportes Campus**: Allows you to see statistical reports regarding admission.
-5. **Audiovisual Material Loan Reports-> Reportes Préstamos Material AudioVisual**: Allows you to see statistical reports regarding the status of the loans.
-6. **Sports Equipment Loan Reports -> Reportes Préstamos Material Deportivo**: Allows you to see statistical reports regarding the status of the loans.
 
 
 ## Main Information
