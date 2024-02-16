@@ -2,17 +2,17 @@ version: '3.9'
 
 services:
   # -----SIASA-EUREKA-----
-  #APP
+  #SERVICE
   siasa-eureka-service:
-    container_name: siasa-eureka-service
-    image: cpujuan/siasa-eureka-service:1.0
-    build: .
+    container_name: siasa-eureka-service #Nombre del contenedor que aparece en Docker
+    image: cpujuan/siasa-eureka-service:1.0 #Imagen para cosntruir el servicio
+    build: . #Se construye desde la raíz
     ports:
-      - '8761:8761'
+      - '8761:8761' #Puerto de salida, Puerto interno del contenedor
     environment:
-      - spring.profiles.active=prod
+      - spring.profiles.active=prod #variable de entorno que consume el servicio (Activar la configuración de producción del servicio)
     networks:
-      - 'eureka-network'
+      - 'eureka-network' #Network a la cual estará conectada internamente con los otros contenedores
 
   # -----SIASA-PRINCIPAL-----
   #APP
@@ -34,55 +34,73 @@ services:
       - siasa-principal-db #Este contenedor depende de la base de datos para poder funcionar correctamente
       - siasa-eureka-service #Este contenedor depende del servicio de eureka para poder funcionar correctamente
     networks:
-      - 'eureka-network'
+      - 'eureka-network' #Network a la cual estará conectada internamente con los otros contenedores
 
-    # -----SIASA-PRESTAMOS-----
-    # APP
-    siasa-prestamos-app:
-      container_name: siasa-prestamos-app #Nombre del contenedor que aparece en Docker
-      image: cpujuan/siasa-prestamos-app:1.1 #Imagen para cosntruir el servicio
-      build: . #Se construye desde la raíz
-      ports:
-        - '8485:8485' #Puerto de salida, Puerto interno del contenedor
-      environment:
-        - PROD_P_DB_HOST=siasa-prestamos-db #variable de entorno que consume el servicio (Host de la base de datos)
-        - PROD_P_DB_PORT=5432 #variable de entorno que consume el servicio (Puerto de conexión de la base de datos)
-        - PROD_P_DB_NAME=siasa-prestamos #variable de entorno que consume el servicio (Nombre de la base de datos)
-        - PROD_P_DB_USERNAME=postgres #variable de entorno que consume el servicio (Usuario de acceso a la base de datos)
-        - PROD_P_DB_PASSWORD=postgres #variable de entorno que consume el servicio (Contraseña de acceso a la base de datos)
-        - spring.profiles.active=prod #variable de entorno que consume el servicio (Activar la configuración de producción del servicio)
-        - TZ=America/Bogota #Variable de entorno para decirle al contenedor la zona horaria que debe seguir
-        - API_SIASA_PRINCIPAL_BY_RFID=http://siasa-principal-app:8484/codigou/rfid/{idRfid} #variable de entorno que consume el servicio (Consumo API Externa)
-        - API_SIASA_EXISTS_RFID=http://siasa-principal-app:8484/rfid/{id} #variable de entorno que consume el servicio (Consumo API Externa)
-        - API_SIASA_EXISTS_UDEC=http://siasa-principal-app:8484/codigou/{id} #variable de entorno que consume el servicio (Consumo API Externa)
-      depends_on:
-        - siasa-prestamos-db #Este contenedor depende de la base de datos para poder funcionar correctamente
-        - siasa-principal-app #Este contenedor depende del contenedor derl servicio principal para funcionar correctamente
-        - siasa-eureka-service #Este contenedor depende del servicio de eureka para poder funcionar correctamente
-      networks:
-        - 'eureka-network'
+  # -----SIASA-PRESTAMOS-----
+  # APP
+  siasa-prestamos-app:
+    container_name: siasa-prestamos-app #Nombre del contenedor que aparece en Docker
+    image: cpujuan/siasa-prestamos-app:1.1 #Imagen para cosntruir el servicio
+    build: . #Se construye desde la raíz
+    ports:
+      - '8485:8485' #Puerto de salida, Puerto interno del contenedor
+    environment:
+      - PROD_P_DB_HOST=siasa-prestamos-db #variable de entorno que consume el servicio (Host de la base de datos)
+      - PROD_P_DB_PORT=5432 #variable de entorno que consume el servicio (Puerto de conexión de la base de datos)
+      - PROD_P_DB_NAME=siasa-prestamos #variable de entorno que consume el servicio (Nombre de la base de datos)
+      - PROD_P_DB_USERNAME=postgres #variable de entorno que consume el servicio (Usuario de acceso a la base de datos)
+      - PROD_P_DB_PASSWORD=postgres #variable de entorno que consume el servicio (Contraseña de acceso a la base de datos)
+      - spring.profiles.active=prod #variable de entorno que consume el servicio (Activar la configuración de producción del servicio)
+      - TZ=America/Bogota #Variable de entorno para decirle al contenedor la zona horaria que debe seguir
+      - API_SIASA_PRINCIPAL_BY_RFID=http://siasa-principal-app:8484/codigou/rfid/{idRfid} #variable de entorno que consume el servicio (Consumo API Externa)
+      - API_SIASA_EXISTS_RFID=http://siasa-principal-app:8484/rfid/{id} #variable de entorno que consume el servicio (Consumo API Externa)
+      - API_SIASA_EXISTS_UDEC=http://siasa-principal-app:8484/codigou/{id} #variable de entorno que consume el servicio (Consumo API Externa)
+    depends_on:
+      - siasa-prestamos-db #Este contenedor depende de la base de datos para poder funcionar correctamente
+      - siasa-principal-app #Este contenedor depende del contenedor derl servicio principal para funcionar correctamente
+      - siasa-eureka-service #Este contenedor depende del servicio de eureka para poder funcionar correctamente
+    networks:
+      - 'eureka-network' #Network a la cual estará conectada internamente con los otros contenedores
 
-    # -----SIASA-REPORTES-----
-    # APP
-    siasa-reportes-app:
-      container_name: siasa-reportes-app #Nombre del contenedor que aparece en Docker
-      image: cpujuan/siasa-reportes-app:1.1 #Imagen para cosntruir el servicio
-      build: . #Se construye desde la raíz
-      ports:
-        - '8486:8486'
-      environment:
-        - PROD_DB_HOST=siasa-principal-db #variable de entorno que consume el servicio (Host de la base de datos)
-        - PROD_DB_PORT=5432 #variable de entorno que consume el servicio (Puerto de conexión de la base de datos)
-        - PROD_DB_NAME=siasa-principal #variable de entorno que consume el servicio (Nombre de la base de datos)
-        - PROD_DB_USERNAME=postgres #variable de entorno que consume el servicio (Usuario de acceso a la base de datos)
-        - PROD_DB_PASSWORD=postgres #variable de entorno que consume el servicio (Contraseña de acceso a la base de datos)
-        - spring.profiles.active=prod #variable de entorno que consume el servicio (Activar la configuración de producción del servicio)
-        - TZ=America/Bogota #Variable de entorno para decirle al contenedor la zona horaria que debe seguir
-      depends_on:
-        - siasa-principal-db #Este contenedor depende de la base de datos para poder funcionar correctamente
-        - siasa-eureka-service #Este contenedor depende del servicio de eureka para poder funcionar correctamente
-      networks:
-        - 'eureka-network'
+  # -----SIASA-REPORTES-----
+  # APP
+  siasa-reportes-app:
+    container_name: siasa-reportes-app #Nombre del contenedor que aparece en Docker
+    image: cpujuan/siasa-reportes-app:1.1 #Imagen para cosntruir el servicio
+    build: . #Se construye desde la raíz
+    ports:
+      - '8486:8486' #Puerto de salida, Puerto interno del contenedor
+    environment:
+      - PROD_DB_HOST=siasa-principal-db #variable de entorno que consume el servicio (Host de la base de datos)
+      - PROD_DB_PORT=5432 #variable de entorno que consume el servicio (Puerto de conexión de la base de datos)
+      - PROD_DB_NAME=siasa-principal #variable de entorno que consume el servicio (Nombre de la base de datos)
+      - PROD_DB_USERNAME=postgres #variable de entorno que consume el servicio (Usuario de acceso a la base de datos)
+      - PROD_DB_PASSWORD=postgres #variable de entorno que consume el servicio (Contraseña de acceso a la base de datos)
+      - spring.profiles.active=prod #variable de entorno que consume el servicio (Activar la configuración de producción del servicio)
+      - TZ=America/Bogota #Variable de entorno para decirle al contenedor la zona horaria que debe seguir
+    depends_on:
+      - siasa-principal-db #Este contenedor depende de la base de datos para poder funcionar correctamente
+      - siasa-eureka-service #Este contenedor depende del servicio de eureka para poder funcionar correctamente
+    networks:
+      - 'eureka-network' #Network a la cual estará conectada internamente con los otros contenedores
+
+  # -----SIASA-GATEWAY-----
+  #SERVICE
+  siasa-gateway-service:
+    container_name: siasa-gateway-service #Nombre del contenedor que aparece en Docker
+    image: cpujuan/siasa-gateway-service:1.0 #Imagen para cosntruir el servicio
+    build: . #Se construye desde la raíz
+    ports:
+    - '8487:8487' #Puerto de salida, Puerto interno del contenedor
+    environment:
+      - spring.profiles.active=prod #variable de entorno que consume el servicio (Activar la configuración de producción del servicio)
+    depends_on:
+      - siasa-eureka-service #Este contenedor depende del servicio de eureka para poder funcionar correctamente
+      - siasa-principal-app #Este contenedor depende del servicio principal para poder funcionar correctamente
+      - siasa-prestamos-app #Este contenedor depende del servicio de prestamos para poder funcionar correctamente
+      - siasa-reportes-app #Este contenedor depende del servicio de reportes para poder funcionar correctamente
+    networks:
+      - 'eureka-network' #Network a la cual estará conectada internamente con los otros contenedores
 
   #DATABASE para SIASA_PRINCIPAL
   #DB
@@ -90,7 +108,7 @@ services:
     container_name: siasa-principal-db #Nombre del contenedor que aparece en Docker
     image: postgres:16-alpine #Imagen para cosntruir el servicio
     ports:
-      - 5432:5432 #Puerto de salida, Puerto interno del contenedor
+      - '5432:5432' #Puerto de salida, Puerto interno del contenedor
     environment:
       POSTGRES_USER: postgres #Variables de entorno para la configuración de la base de datos (Usuario)
       POSTGRES_PASSWORD: postgres #Variables de entorno para la configuración de la base de datos (Contraseña)
@@ -99,7 +117,7 @@ services:
     volumes:
       - postgres_data_principal:/var/lib/postgresql/data #Ruta para persistir datos sin importar si el contenedor se borra
     networks:
-      - eureka-network
+      - 'eureka-network' #Network a la cual estará conectada internamente con los otros contenedores
 
   # DATABASE para SIASA-PRESTAMOS
   #DB
@@ -107,7 +125,7 @@ services:
     container_name: siasa-prestamos-db #Nombre del contenedor que aparece en Docker
     image: postgres:16-alpine #Imagen para cosntruir el servicio
     ports:
-      - 5433:5432 #Puerto de salida, Puerto interno del contenedor
+      - '5433:5432' #Puerto de salida, Puerto interno del contenedor
     environment:
       POSTGRES_USER: postgres #Variables de entorno para la configuración de la base de datos (Usuario)
       POSTGRES_PASSWORD: postgres #Variables de entorno para la configuración de la base de datos (Contraseña)
@@ -116,7 +134,7 @@ services:
     volumes:
       - postgres_data_prestamos:/var/lib/postgresql/data #Ruta para persistir datos sin importar si el contenedor se borra
     networks:
-      - eureka-network
+      - 'eureka-network' #Network a la cual estará conectada internamente con los otros contenedores 
 
 #Networks
 networks:
