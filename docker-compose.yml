@@ -134,7 +134,16 @@ services:
     volumes:
       - postgres_data_prestamos:/var/lib/postgresql/data #Ruta para persistir datos sin importar si el contenedor se borra
     networks:
-      - 'eureka-network' #Network a la cual estará conectada internamente con los otros contenedores 
+      - 'eureka-network' #Network a la cual estará conectada internamente con los otros contenedores
+
+  # REACT FRONT 
+  siasa-react-front:
+    container_name: siasa-react-front #Nombre del contenedor que aparece en Docker
+    image: crisfer23/siasa-react-front:1.2 #Imagen para cosntruir el servicio
+    ports:
+      - '3000:3000' #Puerto de la aplicación React
+    depends_on:
+      - siasa-gateway-service #Dependencia del servicio de gateway
 
 #Networks
 networks:
