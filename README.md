@@ -28,6 +28,8 @@ This architecture handles different projects:
 
 6. **[siasa-gateway](https://github.com/CpuJP/SiasaMicroservices/tree/siasa-gateway) ->** This microservice is the gateway for the customer, and the unification of each microservice offered by the SIASA architecture, as well as being responsible for activating the circuitbreaker in the event of a failure and solving that failure with a failover.
 
+7. **[zipkin](http://localhost:9411) ->** This microservice provided by a third party does not help to centralize the traceability of the logs launched by each microservice.
+
 
 ## Front-End proposal
 The frontendof SIASA has been created by my colleague Cristhian Montejo, who, like me, aspires to the title of Systems Engineer. 
