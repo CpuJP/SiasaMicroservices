@@ -22,11 +22,11 @@ This architecture handles different projects:
 
 3. **[siasa-reportes](https://github.com/CpuJP/SiasaMicroservices/tree/siasa-reportes) ->** This microservice is linked to the Siasa-Principal database, this microservice is responsible for generating reports with statistical data of interest to the different administrators of each area.
 
-4. **[siasa-principal-failover](https://github.com/CpuJP/SiasaMicroservices/tree/siasa-principal-failover) ->**This microservice is responsible for taking over in case the main microservice fails or takes too long to respond.
+4. **[siasa-principal-failover](https://github.com/CpuJP/SiasaMicroservices/tree/siasa-principal-failover) ->** This microservice is responsible for taking over in case the main microservice fails or takes too long to respond.
 
-5. **[siasa-eureka](https://github.com/CpuJP/SiasaMicroservices/tree/siasa-eureka) ->**This microservice is a discovery service for other microservices among themselves for optimal, secure and crucial communication for the SIASA microservices infrastructure.
+5. **[siasa-eureka](https://github.com/CpuJP/SiasaMicroservices/tree/siasa-eureka) ->** This microservice is a discovery service for other microservices among themselves for optimal, secure and crucial communication for the SIASA microservices infrastructure.
 
-6. **[siasa-gateway](https://github.com/CpuJP/SiasaMicroservices/tree/siasa-gateway) ->This microservice is the gateway for the customer, and the unification of each microservice offered by the SIASA architecture, as well as being responsible for activating the circuitbreaker in the event of a failure and solving that failure with a failover.
+6. **[siasa-gateway](https://github.com/CpuJP/SiasaMicroservices/tree/siasa-gateway) ->** This microservice is the gateway for the customer, and the unification of each microservice offered by the SIASA architecture, as well as being responsible for activating the circuitbreaker in the event of a failure and solving that failure with a failover.
 
 
 ## Front-End proposal
