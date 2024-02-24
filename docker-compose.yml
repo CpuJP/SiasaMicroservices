@@ -1,6 +1,28 @@
 version: '3.9'
 
 services:
+  # -----SIASA-ZIPKIN-----
+  #THIRD PARTY SERVICE
+  siasa-zipkin-service:
+    container_name: siasa-zipkin-service #Nombre del contenedor que aparece en Docker
+    image: openzipkin/zipkin #Imagen para cosntruir el servicio
+    ports:
+      - '9411:9411'
+    networks:
+      - 'eureka-network' #Network a la cual estará conectada internamente con los otros contenedores
+  
+  # -----SIASA-PROMETHEUS-----
+  #THIRD PARTY SERVICE
+  siasa-prometheus-service:
+    container_name: siasa-prometheus-service #Nombre del contenedor que aparece en Docker
+    image: prom/prometheus #Imagen para cosntruir el servicio
+    ports:
+     - '9090:9090'
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    networks:
+      - 'eureka-network'
+
   # -----SIASA-EUREKA-----
   #SERVICE
   siasa-eureka-service:
@@ -11,6 +33,8 @@ services:
       - '8761:8761' #Puerto de salida, Puerto interno del contenedor
     environment:
       - spring.profiles.active=prod #variable de entorno que consume el servicio (Activar la configuración de producción del servicio)
+    depends_on:
+      - siasa-zipkin-service
     networks:
       - 'eureka-network' #Network a la cual estará conectada internamente con los otros contenedores
 
@@ -22,6 +46,28 @@ services:
     build: . #Se construye desde la raíz
     ports:
       - '8484:8484' #Puerto de salida, Puerto interno del contenedor
+    environment:
+      - PROD_DB_HOST=siasa-principal-db #variable de entorno que consume el servicio (Host de la base de datos)
+      - PROD_DB_PORT=5432 #variable de entorno que consume el servicio (Puerto de conexión de la base de datos)
+      - PROD_DB_NAME=siasa-principal #variable de entorno que consume el servicio (Nombre de la base de datos)
+      - PROD_DB_USERNAME=postgres #variable de entorno que consume el servicio (Usuario de acceso a la base de datos)
+      - PROD_DB_PASSWORD=postgres #variable de entorno que consume el servicio (Contraseña de acceso a la base de datos)
+      - spring.profiles.active=prod #variable de entorno que consume el servicio (Activar la configuración de producción del servicio)
+      - TZ=America/Bogota #Variable de entorno para decirle al contenedor la zona horaria que debe seguir
+    depends_on:
+      - siasa-principal-db #Este contenedor depende de la base de datos para poder funcionar correctamente
+      - siasa-eureka-service #Este contenedor depende del servicio de eureka para poder funcionar correctamente
+    networks:
+      - 'eureka-network' #Network a la cual estará conectada internamente con los otros contenedores
+
+  # -----SIASA-PRINCIPAL-FAILOVER-----
+  #APP
+  siasa-principal-failover-app:
+    container_name: siasa-principal-failover-app #Nombre del contenedor que aparece en Docker
+    image: cpujuan/siasa-principal-failover-app:1.0 #Imagen para cosntruir el servicio
+    build: . #Se construye desde la raíz
+    ports:
+      - '8488:8488' #Puerto de salida, Puerto interno del contenedor
     environment:
       - PROD_DB_HOST=siasa-principal-db #variable de entorno que consume el servicio (Host de la base de datos)
       - PROD_DB_PORT=5432 #variable de entorno que consume el servicio (Puerto de conexión de la base de datos)
