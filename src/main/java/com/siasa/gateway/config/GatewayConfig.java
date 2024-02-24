@@ -329,15 +329,11 @@ public class GatewayConfig {
                         .uri("lb://siasa-prestamos-dev"))
                 .route(predicateSpec -> predicateSpec.path("/prestamomaterialdeportivo/**")
                         .uri("lb://siasa-prestamos-dev"))
-                .route(predicateSpec -> predicateSpec.path("/actuator/**")
-                        .uri("lb://siasa-prestamos-dev"))
                 .route(predicateSpec -> predicateSpec.path("/prestamos/**")
                         .uri("lb://siasa-prestamos-dev"))
 
                 //SIASA-REPORTES
                 .route(predicateSpec -> predicateSpec.path("/report/**")
-                        .uri("lb://siasa-reportes-dev"))
-                .route(predicateSpec -> predicateSpec.path("/actuator/**")
                         .uri("lb://siasa-reportes-dev"))
                 .route(predicateSpec -> predicateSpec.path("/reportes/**")
                         .uri("lb://siasa-reportes-dev"))
@@ -664,15 +660,11 @@ public class GatewayConfig {
                         .uri("lb://siasa-prestamos-prod"))
                 .route(predicateSpec -> predicateSpec.path("/prestamomaterialdeportivo/**")
                         .uri("lb://siasa-prestamos-prod"))
-                .route(predicateSpec -> predicateSpec.path("/actuator/**")
-                        .uri("lb://siasa-prestamos-prod"))
                 .route(predicateSpec -> predicateSpec.path("/prestamos/**")
                         .uri("lb://siasa-prestamos-prod"))
 
                 //SIASA-REPORTES
                 .route(predicateSpec -> predicateSpec.path("/report/**")
-                        .uri("lb://siasa-reportes-prod"))
-                .route(predicateSpec -> predicateSpec.path("/actuator/**")
                         .uri("lb://siasa-reportes-prod"))
                 .route(predicateSpec -> predicateSpec.path("/reportes/**")
                         .uri("lb://siasa-reportes-prod"))
