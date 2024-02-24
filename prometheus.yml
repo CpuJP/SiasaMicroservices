@@ -1,0 +1,53 @@
+# Configuración global
+global:
+  scrape_interval: 5s           # Establece el intervalo de rastreo a cada 5 segundos.
+  evaluation_interval: 15s      # Evalúa las reglas cada 15 segundos.
+  scrape_timeout: 5s            # Establece el tiempo de espera de rastreo a 5 segundos.
+
+# Configuración de Alertmanager
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets: []            # Agrega los objetivos de Alertmanager si los tienes.
+
+# Archivos de reglas
+rule_files:
+  # - "first_rules.yml"
+  # - "second_rules.yml"
+
+# Configuración de rastreo
+scrape_configs:
+  - job_name: "siasa-principal-prod"
+    metrics_path: /actuator/prometheus
+    static_configs:
+      - targets: ["host.docker.internal:8484"]   # Agrega los objetivos que deseas rastrear.
+
+
+  - job_name: "siasa-prestamos-prod"
+    metrics_path: /actuator/prometheus
+    static_configs:
+      - targets: ["host.docker.internal:8485"]   # Agrega los objetivos que deseas rastrear.
+
+
+  - job_name: "siasa-reportes-prod"
+    metrics_path: /actuator/prometheus
+    static_configs:
+      - targets: ["host.docker.internal:8486"]   # Agrega los objetivos que deseas rastrear.
+
+
+  - job_name: "siasa-principal-failover-prod"
+    metrics_path: /actuator/prometheus
+    static_configs:
+      - targets: ["host.docker.internal:8488"]   # Agrega los objetivos que deseas rastrear.
+
+
+  - job_name: "siasa-eureka-prod"
+    metrics_path: /actuator/prometheus
+    static_configs:
+      - targets: ["host.docker.internal:8761"]   # Agrega los objetivos que deseas rastrear.
+
+
+  - job_name: "siasa-gateway-prod"
+    metrics_path: /actuator/prometheus
+    static_configs:
+      - targets: ["host.docker.internal:8487"]   # Agrega los objetivos que deseas rastrear.
