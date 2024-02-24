@@ -4,6 +4,7 @@ import com.siasa.siasaprincipal.dto.BibliotecaDto;
 import com.siasa.siasaprincipal.dto.CampusDto;
 import com.siasa.siasaprincipal.dto.ErrorResponseDto;
 import com.siasa.siasaprincipal.service.BibliotecaService;
+import io.micrometer.core.annotation.Timed;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
