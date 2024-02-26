@@ -8,6 +8,8 @@ import com.siasa.principalfailover.exception.MessageNotFoundException;
 import com.siasa.principalfailover.repository.RfidRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -38,6 +40,7 @@ public class RfidServiceImpl implements RfidService{
 
     //Se crea la logica de negocio implementando la interface para abstraer la logica de la exposicion de apis
     @Override
+    @Cacheable(value = "rfid", key = "'findAll'")
     public ResponseEntity<List<RfidDto>> findAll() {
         List<Rfid> rfids = rfidRepository.findAll();
         //Si la lista no esta vacia se mapea del entity a dto para exponerlo en el endpoint
@@ -47,7 +50,7 @@ public class RfidServiceImpl implements RfidService{
                     .collect(Collectors.toList());
 
             return new ResponseEntity<>(rfidDtos, HttpStatus.OK);
-        //si la lista esta vacia, se envia un mensaje de excepcion donde se muestra el codigo 204 sin contenido
+            //si la lista esta vacia, se envia un mensaje de excepcion donde se muestra el codigo 204 sin contenido
         } else {
             log.warn("No hay datos en la tabla Rfid");
             throw new MessageNotFoundException("No hay datos en la tabla Rfid");
@@ -55,6 +58,7 @@ public class RfidServiceImpl implements RfidService{
     }
 
     @Override
+    @Cacheable(value = "rfid", key = "'findAllP' + #pageNumber + #pageSize")
     public ResponseEntity<Page<RfidDto>> findAllP(int pageNumber, int pageSize) {
         Pageable pageable = PageRequest.of(pageNumber, pageSize);
         Page<Rfid> rfidPage = rfidRepository.findAll(pageable);
@@ -68,6 +72,7 @@ public class RfidServiceImpl implements RfidService{
     }
 
     @Override
+    @Cacheable(value = "rfid", key = "'findRfidWithoutCodigoU'")
     public ResponseEntity<List<RfidDto>> findRfidWithoutCodigoU() {
         List<Rfid> rfids = rfidRepository.findRfidWithoutCodigoU();
         if (!rfids.isEmpty()) {
@@ -82,6 +87,7 @@ public class RfidServiceImpl implements RfidService{
     }
 
     @Override
+    @Cacheable(value = "rfid", key = "'findById' + #id")
     public ResponseEntity<RfidDto> findById(String id) {
         //Se toma el id obtenido por la api y se envia al repositorio para que lo busque en la BD
         Optional<Rfid> rfids = Optional.ofNullable(rfidRepository.findById(id)
@@ -97,6 +103,7 @@ public class RfidServiceImpl implements RfidService{
     }
 
     @Override
+    @CacheEvict(value = "rfid", allEntries = true)
     public ResponseEntity<RfidDto> create(RfidDto rfidDto) {
         if (rfidDto.getIdRfid().isEmpty()) {
             log.warn("El campo del código del carnet es obligatorio");
@@ -121,6 +128,7 @@ public class RfidServiceImpl implements RfidService{
     }
 
     @Override
+    @CacheEvict(value = "rfid", allEntries = true)
     public ResponseEntity<String> delete(String id) {
         if (rfidRepository.isRfidLinkedToCodigoU(id)) {
             log.warn(String.format("El carnet que se intenta eliminar con código %s tiene datos ligados", id));

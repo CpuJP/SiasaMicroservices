@@ -12,6 +12,8 @@ import com.siasa.principalfailover.repository.LaboratorioRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeMap;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -50,6 +52,7 @@ public class LaboratorioServiceImpl implements LaboratorioService {
     }
 
     @Override
+    @Cacheable(value = "laboratorio", key = "'findAll'")
     public ResponseEntity<List<LaboratorioDto>> findAll() {
         List<Laboratorio> laboratorioList = laboratorioRepository.findAll();
         if (!laboratorioList.isEmpty()) {
@@ -64,6 +67,7 @@ public class LaboratorioServiceImpl implements LaboratorioService {
     }
 
     @Override
+    @Cacheable(value = "laboratorio", key = "'findAllP' + #pageNumber + #pageSize + #sortBy + #sortOrder")
     public ResponseEntity<Page<LaboratorioDto>> findAllP(int pageNumber, int pageSize, String sortBy, String sortOrder) {
         Sort sort = sortOrder.equalsIgnoreCase(Sort.Direction.ASC.name()) ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
         Pageable pageable = PageRequest.of(pageNumber, pageSize, sort);
@@ -78,6 +82,7 @@ public class LaboratorioServiceImpl implements LaboratorioService {
     }
 
     @Override
+    @Cacheable(value = "laboratorio", key = "'findByCodigoUIdCodigoU' + #idCodiogU")
     public ResponseEntity<List<LaboratorioDto>> findByCodigoUIdCodigoU(String idCodiogU) {
         if(!codigoURepository.existsById(idCodiogU)) {
             throw new MessageBadRequestException(String.format("La persona con el código %s no existe en base de datos", idCodiogU));
@@ -95,6 +100,7 @@ public class LaboratorioServiceImpl implements LaboratorioService {
     }
 
     @Override
+    @CacheEvict(value = "laboratorio", allEntries = true)
     public ResponseEntity<LaboratorioDto> createIn(String idRfid) {
         Optional<CodigoU> codigoUOptional = Optional.ofNullable(codigoURepository.findByRfidIdRfid(idRfid)
                 .orElseThrow(() -> new MessageNotFoundException(String.format("El carnet %s no registra en base de datos", idRfid))));
@@ -123,6 +129,7 @@ public class LaboratorioServiceImpl implements LaboratorioService {
     }
 
     @Override
+    @CacheEvict(value = "laboratorio", allEntries = true)
     public ResponseEntity<LaboratorioDto> createOut(String idRfid) {
         CodigoU codigoU = codigoURepository.findByRfidIdRfid(idRfid)
                 .orElseThrow(() -> new MessageNotFoundException(String.format("El carnet %s no registra en base de datos", idRfid)));
@@ -152,6 +159,7 @@ public class LaboratorioServiceImpl implements LaboratorioService {
 
 
     @Override
+    @Cacheable(value = "laboratorio", key = "'existsByCodigoUIdCodigoU' + #idCodigoU")
     public ResponseEntity<String> existsByCodigoUIdCodigoU(String idCodigoU) {
         if(!codigoURepository.existsById(idCodigoU)) {
             throw new MessageNotFoundException(String.format("La persona con el código %s no existe en base de datos", idCodigoU));
@@ -164,6 +172,7 @@ public class LaboratorioServiceImpl implements LaboratorioService {
     }
 
     @Override
+    @Cacheable(value = "laboratorio", key = "'findByFechaIngreso' + #fechaInicial + #fechaFinal")
     public ResponseEntity<List<LaboratorioDto>> findByFechaIngreso(LocalDateTime fechaInicial, LocalDateTime fechaFinal) {
         List<Laboratorio> laboratorios = laboratorioRepository.findLaboratoriosByFechaIngresoBetween(fechaInicial, fechaFinal);
         if (!laboratorios.isEmpty()) {
@@ -177,6 +186,7 @@ public class LaboratorioServiceImpl implements LaboratorioService {
     }
 
     @Override
+    @Cacheable(value = "laboratorio", key = "'findByFechaSalida' + #fechaInicial + #fechaFinal")
     public ResponseEntity<List<LaboratorioDto>> findByFechaSalida(LocalDateTime fechaInicial, LocalDateTime fechaFinal) {
         List<Laboratorio> laboratorios = laboratorioRepository.findLaboratoriosByFechaSalidaBetween(fechaInicial, fechaFinal);
         if (!laboratorios.isEmpty()) {
@@ -190,6 +200,7 @@ public class LaboratorioServiceImpl implements LaboratorioService {
     }
 
     @Override
+    @Cacheable(value = "laboratorio", key = "'findByIdCodigoUAndFechaIngreso' + #idCodigoU + #fechaInicial + #fechaFinal")
     public ResponseEntity<List<LaboratorioDto>> findByIdCodigoUAndFechaIngreso(String idCodigoU, LocalDateTime fechaInicial, LocalDateTime fechaFinal) {
         if(!codigoURepository.existsById(idCodigoU)) {
             throw new MessageBadRequestException(String.format("La persona con el código %s no existe en base de datos", idCodigoU));
@@ -206,6 +217,7 @@ public class LaboratorioServiceImpl implements LaboratorioService {
     }
 
     @Override
+    @Cacheable(value = "laboratorio", key = "'findByIdCodigoUAndFechaSalida' + #idCodigoU + #fechaInicial + #fechaFinal")
     public ResponseEntity<List<LaboratorioDto>> findByIdCodigoUAndFechaSalida(String idCodigoU, LocalDateTime fechaInicial, LocalDateTime fechaFinal) {
         if(!codigoURepository.existsById(idCodigoU)) {
             throw new MessageBadRequestException(String.format("La persona con el código %s no existe en base de datos", idCodigoU));
