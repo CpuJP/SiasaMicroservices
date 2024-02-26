@@ -11,6 +11,11 @@ import com.siasa.siasaprincipal.repository.CodigoURepository;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeMap;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.cache.CacheManager;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -36,6 +41,7 @@ public class BibliotecaServiceImpl implements BibliotecaService{
 
     private final CodigoURepository codigoURepository;
 
+
     public BibliotecaServiceImpl(BibliotecaRepository bibliotecaRepository, ModelMapper modelMapper, CodigoURepository codigoURepository) {
         this.bibliotecaRepository = bibliotecaRepository;
         this.modelMapper = modelMapper;
@@ -51,6 +57,7 @@ public class BibliotecaServiceImpl implements BibliotecaService{
     }
 
     @Override
+    @Cacheable(value = "biblioteca", key = "'findAll'")
     public ResponseEntity<List<BibliotecaDto>> findAll() {
         List<Biblioteca> bibliotecas = bibliotecaRepository.findAll();
         if (!bibliotecas.isEmpty()) {
@@ -65,6 +72,7 @@ public class BibliotecaServiceImpl implements BibliotecaService{
     }
 
     @Override
+    @Cacheable(value = "biblioteca", key = "'findAllP' + #pageNumber + #pageSize + #sortBY + #sortOrder")
     public ResponseEntity<Page<BibliotecaDto>> findAllP(int pageNumber, int pageSize, String sortBY, String sortOrder) {
         Sort sort = sortOrder.equalsIgnoreCase(Sort.Direction.ASC.name()) ? Sort.by(sortBY).ascending() : Sort.by(sortBY).descending();
         Pageable pageable = PageRequest.of(pageNumber, pageSize, sort);
@@ -79,6 +87,7 @@ public class BibliotecaServiceImpl implements BibliotecaService{
     }
 
     @Override
+    @Cacheable(value = "biblioteca", key = "'findByCodigoUIdCodigoU' + #idCodigoU")
     public ResponseEntity<List<BibliotecaDto>> findByCodigoUIdCodigoU(String idCodigoU) {
         if (!codigoURepository.existsById(idCodigoU)) {
             throw new MessageBadRequestException(String.format("La persona con el código %s no existe en base de datos", idCodigoU));
@@ -96,6 +105,7 @@ public class BibliotecaServiceImpl implements BibliotecaService{
     }
 
     @Override
+    @CacheEvict(value = "biblioteca", allEntries = true)
     public ResponseEntity<BibliotecaDto> create(String idRfid) {
         Optional<CodigoU> codigoUOptional = Optional.ofNullable(codigoURepository.findByRfidIdRfid(idRfid)
                 .orElseThrow(() -> new MessageNotFoundException(String.format("El carnet %s no registra en base de datos", idRfid))));
@@ -125,6 +135,7 @@ public class BibliotecaServiceImpl implements BibliotecaService{
     }
 
     @Override
+    @Cacheable(value = "biblioteca", key = "'existsByCodigoUIdCodigoU' + #idCodigoU")
     public ResponseEntity<String> existsByCodigoUIdCodigoU(String idCodigoU) {
         if (!codigoURepository.existsById(idCodigoU)) {
             throw new MessageNotFoundException(String.format("La persona con el código %s no existe en base de datos", idCodigoU));
@@ -137,6 +148,7 @@ public class BibliotecaServiceImpl implements BibliotecaService{
     }
 
     @Override
+    @Cacheable(value = "biblioteca", key = "'findByFechaIngreso' + #fechaInicial + #fechaFinal")
     public ResponseEntity<List<BibliotecaDto>> findByFechaIngreso(LocalDateTime fechaInicial, LocalDateTime fechaFinal) {
         List<Biblioteca> bibliotecas = bibliotecaRepository.findBibliotecasByFechaIngresoBetween(fechaInicial, fechaFinal);
         if (!bibliotecas.isEmpty()) {
@@ -150,6 +162,7 @@ public class BibliotecaServiceImpl implements BibliotecaService{
     }
 
     @Override
+    @Cacheable(value = "biblioteca", key = "'findByIdCodigoUAndFechaIngreso' + #idCodigoU + #fechaInicial + #fechaFinal")
     public ResponseEntity<List<BibliotecaDto>> findByIdCodigoUAndFechaIngreso(String idCodigoU, LocalDateTime fechaInicial, LocalDateTime fechaFinal) {
         if (!codigoURepository.existsById(idCodigoU)) {
             throw new MessageNotFoundException(String.format("La persona con el código %s no existe en base de datos", idCodigoU));

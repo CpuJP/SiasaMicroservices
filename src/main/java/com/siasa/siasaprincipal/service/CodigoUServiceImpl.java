@@ -8,6 +8,12 @@ import com.siasa.siasaprincipal.repository.*;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeMap;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.Cache;
+import org.springframework.cache.CacheManager;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -28,23 +34,44 @@ public class CodigoUServiceImpl implements CodigoUService{
 
     private final CodigoURepository codigoURepository;
     private final RfidRepository rfidRepository;
-    private final ModelMapper modelMapper;
+
     private final BibliotecaRepository bibliotecaRepository;
+
     private final CampusRepository campusRepository;
+
     private final LaboratorioRepository laboratorioRepository;
+
     private final SalaComputoRepository salaComputoRepository;
 
-    public CodigoUServiceImpl(CodigoURepository codigoURepository, RfidRepository rfidRepository, ModelMapper modelMapper, BibliotecaRepository bibliotecaRepository, CampusRepository campusRepository, LaboratorioRepository laboratorioRepository, SalaComputoRepository salaComputoRepository) {
+    private final ModelMapper modelMapper;
+
+    private final CacheManager cacheManager;
+
+
+    public CodigoUServiceImpl(CodigoURepository codigoURepository, RfidRepository rfidRepository, BibliotecaRepository bibliotecaRepository, CampusRepository campusRepository, LaboratorioRepository laboratorioRepository, SalaComputoRepository salaComputoRepository, ModelMapper modelMapper, CacheManager cacheManager) {
         this.codigoURepository = codigoURepository;
         this.rfidRepository = rfidRepository;
-        this.modelMapper = modelMapper;
         this.bibliotecaRepository = bibliotecaRepository;
         this.campusRepository = campusRepository;
         this.laboratorioRepository = laboratorioRepository;
         this.salaComputoRepository = salaComputoRepository;
+        this.modelMapper = modelMapper;
+        this.cacheManager = cacheManager;
+    }
+
+    private void limpiarCaches() {
+        String[] cacheNames = {"biblioteca", "rfid", "codigoU", "laboratorio", "salaComputo", "campus"};
+        for (String cacheName : cacheNames) {
+            Cache cache = cacheManager.getCache(cacheName);
+            if (cache != null) {
+                cache.clear();
+                log.info("Cache '{}' borrado exitosamente.", cacheName);
+            }
+        }
     }
 
     @Override
+    @Cacheable(value = "codigoU", key = "'findAll'")
     public ResponseEntity<List<CodigoUDto>> findAll() {
         List<CodigoU> codigoUS = codigoURepository.findAll();
         if (!codigoUS.isEmpty()) {
@@ -63,6 +90,7 @@ public class CodigoUServiceImpl implements CodigoUService{
     }
 
     @Override
+    @Cacheable(value = "codigoU", key = "'findAllP' + #pageNumber + #pageSize + #sortBy + #sortOrder")
     public ResponseEntity<Page<CodigoUDto>> findAllP(int pageNumber, int pageSize, String sortBy, String sortOrder) {
         Sort sort = sortOrder.equalsIgnoreCase(Sort.Direction.ASC.name()) ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
         Pageable pageable = PageRequest.of(pageNumber, pageSize, sort);
@@ -81,6 +109,7 @@ public class CodigoUServiceImpl implements CodigoUService{
     }
 
     @Override
+    @Cacheable(value = "codigoU", key = "'findById' + #id")
     public ResponseEntity<CodigoUDto> findById(String id) {
         Optional<CodigoU> codigoUOptional = Optional.ofNullable(codigoURepository.findById(id)
                 .orElseThrow(() -> new MessageNotFoundException(String.format("La persona con código %s no existe", id))));
@@ -97,6 +126,7 @@ public class CodigoUServiceImpl implements CodigoUService{
     }
 
     @Override
+    @Cacheable(value = "codigoU", key = "'findByRfid' + #idRfid")
     public ResponseEntity<CodigoUDto> findByRfid(String idRfid) {
         if (!rfidRepository.existsById(idRfid)) {
             throw new MessageBadRequestException(String.format("El carnet con código %s no existe en base de datos", idRfid));
@@ -117,6 +147,7 @@ public class CodigoUServiceImpl implements CodigoUService{
     }
 
     @Override
+    @CacheEvict(value = "codigoU", allEntries = true)
     public ResponseEntity<CodigoUDto> create(CodigoUDto codigoUDto) {
         if (codigoUDto.getIdCodigoU().isEmpty() || codigoUDto.getPrimerNombre().isEmpty() || codigoUDto.getPrimerApellido().isEmpty() || codigoUDto.getRfidDto().getIdRfid().isEmpty()) {
             log.warn("Los campos PrimerNombre, Primer Apellido, Codigo Universidad, Codigo Rfid son obligatorios");
@@ -153,6 +184,7 @@ public class CodigoUServiceImpl implements CodigoUService{
     }
 
     @Override
+    @CacheEvict(value = "codigoU", allEntries = true)
     public ResponseEntity<CodigoUDto> update(String id, CodigoUDto codigoUDto) {
         try {
             CodigoU codigoU = codigoURepository.findById(id)
@@ -200,6 +232,9 @@ public class CodigoUServiceImpl implements CodigoUService{
             typeMap.addMapping(CodigoU::getRfid, CodigoUDto::setRfidDto);
             codigoUDto = typeMap.map(codigoU);
 
+            limpiarCaches();
+
+
             return ResponseEntity.ok(codigoUDto);
         } catch (MessageNotFoundException e) {
             throw e;
@@ -214,6 +249,7 @@ public class CodigoUServiceImpl implements CodigoUService{
 
 
     @Override
+    @CacheEvict(value = "codigoU", allEntries = true)
     public ResponseEntity<String> delete(String id) {
         // Verificar si existen datos antes de eliminarlos
         boolean borrarBiblioteca = bibliotecaRepository.existsByCodigoUIdCodigoU(id);
@@ -227,11 +263,14 @@ public class CodigoUServiceImpl implements CodigoUService{
         if (borrarLaboratorio) laboratorioRepository.deleteAllByCodigoUIdCodigoU(id);
         if (borrarSalaComputo) salaComputoRepository.deleteAllByCodigoUIdCodigoU(id);
 
+
         // Obtener el ID del RFID
         CodigoUDto codigoU = findById(id).getBody();
 
         // Eliminar el registro de CodigoU
         codigoURepository.deleteById(id);
+
+        limpiarCaches();
 
         if (codigoU != null) {
             String idRfidC = codigoU.getRfidDto().getIdRfid();

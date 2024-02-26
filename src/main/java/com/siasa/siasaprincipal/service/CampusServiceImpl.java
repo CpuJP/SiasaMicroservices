@@ -12,6 +12,11 @@ import com.siasa.siasaprincipal.repository.CodigoURepository;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeMap;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.cache.CacheManager;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -35,11 +40,11 @@ public class CampusServiceImpl implements CampusService{
     private final ModelMapper modelMapper;
     private final CodigoURepository codigoURepository;
 
+
     public CampusServiceImpl(CampusRepository campusRepository, ModelMapper modelMapper, CodigoURepository codigoURepository) {
         this.campusRepository = campusRepository;
         this.modelMapper = modelMapper;
         this.codigoURepository = codigoURepository;
-
     }
 
     private CampusDto mapToDto(Campus campus) {
@@ -51,6 +56,7 @@ public class CampusServiceImpl implements CampusService{
     }
 
     @Override
+    @Cacheable(value = "campus", key = "'findAll'")
     public ResponseEntity<List<CampusDto>> findAll() {
         List<Campus> campusList = campusRepository.findAll();
         if (!campusList.isEmpty()) {
@@ -66,6 +72,7 @@ public class CampusServiceImpl implements CampusService{
     }
 
     @Override
+    @Cacheable(value = "campus", key = "'findAllP' + #pageNumber + #pageSize + #sortBY + #sortOrder")
     public ResponseEntity<Page<CampusDto>> findAllP(int pageNumber, int pageSize, String sortBY, String sortOrder) {
         Sort sort = sortOrder.equalsIgnoreCase(Sort.Direction.ASC.name()) ? Sort.by(sortBY).ascending() : Sort.by(sortBY).descending();
         Pageable pageable = PageRequest.of(pageNumber, pageSize, sort);
@@ -82,6 +89,7 @@ public class CampusServiceImpl implements CampusService{
     }
 
     @Override
+    @Cacheable(value = "campus", key = "'findByCodigoUIdCodigoU' + #idCodigoU")
     public ResponseEntity<List<CampusDto>> findByCodigoUIdCodigoU(String idCodigoU) {
         if (!codigoURepository.existsById(idCodigoU)) {
             throw new MessageBadRequestException(String.format("La persona con el código %s no existe en base de datos", idCodigoU));
@@ -99,6 +107,7 @@ public class CampusServiceImpl implements CampusService{
     }
 
     @Override
+    @CacheEvict(value = "campus", allEntries = true)
     public ResponseEntity<CampusDto> create(String idRfid) {
         Optional<CodigoU> codigoUOptional = Optional.ofNullable(codigoURepository.findByRfidIdRfid(idRfid)
                 .orElseThrow(() -> new MessageNotFoundException(String.format("El carnet %s no registra en base de datos", idRfid))));
@@ -127,6 +136,7 @@ public class CampusServiceImpl implements CampusService{
     }
 
     @Override
+    @Cacheable(value = "campus", key = "'existsByCodigoUIdCodigoU' + #idCodigoU")
     public ResponseEntity<String> existsByCodigoUIdCodigoU(String idCodigoU) {
         if (!codigoURepository.existsById(idCodigoU)) {
             throw new MessageNotFoundException(String.format("La persona con el código %s no existe en base de datos", idCodigoU));
@@ -140,6 +150,7 @@ public class CampusServiceImpl implements CampusService{
     }
 
     @Override
+    @Cacheable(value = "campus", key = "'findByFechaIngreso' + #fechaInicial + #fechaFinal")
     public ResponseEntity<List<CampusDto>> findByFechaIngreso(LocalDateTime fechaInicial, LocalDateTime fechaFinal) {
         List<Campus> campusList = campusRepository.findCampusByFechaIngresoBetween(fechaInicial, fechaFinal);
         if (!campusList.isEmpty()) {
@@ -153,6 +164,7 @@ public class CampusServiceImpl implements CampusService{
     }
 
     @Override
+    @Cacheable(value = "campus", key = "'findByIdCodigoUAndFechaIngreso' + #idCodigoU + #fechaInicial + #fechaFinal")
     public ResponseEntity<List<CampusDto>> findByIdCodigoUAndFechaIngreso(String idCodigoU, LocalDateTime fechaInicial, LocalDateTime fechaFinal) {
         if (!codigoURepository.existsById(idCodigoU)) {
             throw new MessageNotFoundException(String.format("La persona con el código %s no existe en base de datos", idCodigoU));
