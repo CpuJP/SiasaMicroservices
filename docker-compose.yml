@@ -1,6 +1,40 @@
 version: '3.9'
 
 services:
+  #DATABASE para SIASA_PRINCIPAL
+  #DB
+  siasa-principal-db:
+    container_name: siasa-principal-db #Nombre del contenedor que aparece en Docker
+    image: postgres:16-alpine #Imagen para cosntruir el servicio
+    ports:
+      - '5432:5432' #Puerto de salida, Puerto interno del contenedor
+    environment:
+      POSTGRES_USER: postgres #Variables de entorno para la configuración de la base de datos (Usuario)
+      POSTGRES_PASSWORD: postgres #Variables de entorno para la configuración de la base de datos (Contraseña)
+      POSTGRES_DB: siasa-principal #Variables de entorno para la configuración de la base de datos (Nombre de la base de datos)
+      TZ: 'America/Bogota' #Variable de entorno para decirle al contenedor la zona horaria que debe seguir
+    volumes:
+      - postgres_data_principal:/var/lib/postgresql/data #Ruta para persistir datos sin importar si el contenedor se borra
+    networks:
+      - 'siasa-network' #Network a la cual estará conectada internamente con los otros contenedores
+
+  # DATABASE para SIASA-PRESTAMOS
+  #DB
+  siasa-prestamos-db:
+    container_name: siasa-prestamos-db #Nombre del contenedor que aparece en Docker
+    image: postgres:16-alpine #Imagen para cosntruir el servicio
+    ports:
+      - '5433:5432' #Puerto de salida, Puerto interno del contenedor
+    environment:
+      POSTGRES_USER: postgres #Variables de entorno para la configuración de la base de datos (Usuario)
+      POSTGRES_PASSWORD: postgres #Variables de entorno para la configuración de la base de datos (Contraseña)
+      POSTGRES_DB: siasa-prestamos #Variables de entorno para la configuración de la base de datos (Nombre de la base de datos)
+      TZ: 'America/Bogota' #Variable de entorno para decirle al contenedor la zona horaria que debe seguir
+    volumes:
+      - postgres_data_prestamos:/var/lib/postgresql/data #Ruta para persistir datos sin importar si el contenedor se borra
+    networks:
+      - 'siasa-network' #Network a la cual estará conectada internamente con los otros contenedores 
+
   # -----SIASA-ZIPKIN-----
   #THIRD PARTY SERVICE
   siasa-zipkin-service:
@@ -9,7 +43,7 @@ services:
     ports:
       - '9411:9411'
     networks:
-      - 'eureka-network' #Network a la cual estará conectada internamente con los otros contenedores
+      - 'siasa-network' #Network a la cual estará conectada internamente con los otros contenedores
   
   # -----SIASA-PROMETHEUS-----
   #THIRD PARTY SERVICE
@@ -21,7 +55,17 @@ services:
     volumes:
       - ./prometheus.yml:/etc/prometheus/prometheus.yml
     networks:
-      - 'eureka-network'
+      - 'siasa-network'
+
+  # -----SIASA-GRAFANA-----
+  #THIRD PARTY SERVICE
+  siasa-grafana-service:
+    container_name: siasa-grafana-service #Nombre del contenedor que aparece en Docker
+    image: grafana/grafana-enterprise #Imagen para cosntruir el servicio
+    ports:
+      - '3000:3000'
+    networks:
+      - 'siasa-network'
 
   # -----SIASA-EUREKA-----
   #SERVICE
@@ -36,7 +80,7 @@ services:
     depends_on:
       - siasa-zipkin-service
     networks:
-      - 'eureka-network' #Network a la cual estará conectada internamente con los otros contenedores
+      - 'siasa-network' #Network a la cual estará conectada internamente con los otros contenedores
 
   # -----SIASA-PRINCIPAL-----
   #APP
@@ -58,7 +102,7 @@ services:
       - siasa-principal-db #Este contenedor depende de la base de datos para poder funcionar correctamente
       - siasa-eureka-service #Este contenedor depende del servicio de eureka para poder funcionar correctamente
     networks:
-      - 'eureka-network' #Network a la cual estará conectada internamente con los otros contenedores
+      - 'siasa-network' #Network a la cual estará conectada internamente con los otros contenedores
 
   # -----SIASA-PRINCIPAL-FAILOVER-----
   #APP
@@ -80,7 +124,7 @@ services:
       - siasa-principal-db #Este contenedor depende de la base de datos para poder funcionar correctamente
       - siasa-eureka-service #Este contenedor depende del servicio de eureka para poder funcionar correctamente
     networks:
-      - 'eureka-network' #Network a la cual estará conectada internamente con los otros contenedores
+      - 'siasa-network' #Network a la cual estará conectada internamente con los otros contenedores
 
   # -----SIASA-PRESTAMOS-----
   # APP
@@ -98,15 +142,16 @@ services:
       - PROD_P_DB_PASSWORD=postgres #variable de entorno que consume el servicio (Contraseña de acceso a la base de datos)
       - spring.profiles.active=prod #variable de entorno que consume el servicio (Activar la configuración de producción del servicio)
       - TZ=America/Bogota #Variable de entorno para decirle al contenedor la zona horaria que debe seguir
-      - API_SIASA_PRINCIPAL_BY_RFID=http://siasa-principal-app:8484/codigou/rfid/{idRfid} #variable de entorno que consume el servicio (Consumo API Externa)
-      - API_SIASA_EXISTS_RFID=http://siasa-principal-app:8484/rfid/{id} #variable de entorno que consume el servicio (Consumo API Externa)
-      - API_SIASA_EXISTS_UDEC=http://siasa-principal-app:8484/codigou/{id} #variable de entorno que consume el servicio (Consumo API Externa)
+      - API_SIASA_PRINCIPAL_BY_RFID=http://siasa-gateway-service:8487/codigou/rfid/{idRfid} #variable de entorno que consume el servicio (Consumo API Externa)
+      - API_SIASA_EXISTS_RFID=http://siasa-gateway-service:8487/rfid/{id} #variable de entorno que consume el servicio (Consumo API Externa)
+      - API_SIASA_EXISTS_UDEC=http://siasa-gateway-service:8487/codigou/{id} #variable de entorno que consume el servicio (Consumo API Externa)
     depends_on:
       - siasa-prestamos-db #Este contenedor depende de la base de datos para poder funcionar correctamente
       - siasa-principal-app #Este contenedor depende del contenedor derl servicio principal para funcionar correctamente
+      - siasa-principal-failover-app
       - siasa-eureka-service #Este contenedor depende del servicio de eureka para poder funcionar correctamente
     networks:
-      - 'eureka-network' #Network a la cual estará conectada internamente con los otros contenedores
+      - 'siasa-network' #Network a la cual estará conectada internamente con los otros contenedores
 
   # -----SIASA-REPORTES-----
   # APP
@@ -128,7 +173,7 @@ services:
       - siasa-principal-db #Este contenedor depende de la base de datos para poder funcionar correctamente
       - siasa-eureka-service #Este contenedor depende del servicio de eureka para poder funcionar correctamente
     networks:
-      - 'eureka-network' #Network a la cual estará conectada internamente con los otros contenedores
+      - 'siasa-network' #Network a la cual estará conectada internamente con los otros contenedores
 
   # -----SIASA-GATEWAY-----
   #SERVICE
@@ -145,42 +190,9 @@ services:
       - siasa-principal-app #Este contenedor depende del servicio principal para poder funcionar correctamente
       - siasa-prestamos-app #Este contenedor depende del servicio de prestamos para poder funcionar correctamente
       - siasa-reportes-app #Este contenedor depende del servicio de reportes para poder funcionar correctamente
+      - siasa-principal-failover-app #Este contenedor depende de failover de reportes para poder funcionar correctamente
     networks:
-      - 'eureka-network' #Network a la cual estará conectada internamente con los otros contenedores
-
-  #DATABASE para SIASA_PRINCIPAL
-  #DB
-  siasa-principal-db:
-    container_name: siasa-principal-db #Nombre del contenedor que aparece en Docker
-    image: postgres:16-alpine #Imagen para cosntruir el servicio
-    ports:
-      - '5432:5432' #Puerto de salida, Puerto interno del contenedor
-    environment:
-      POSTGRES_USER: postgres #Variables de entorno para la configuración de la base de datos (Usuario)
-      POSTGRES_PASSWORD: postgres #Variables de entorno para la configuración de la base de datos (Contraseña)
-      POSTGRES_DB: siasa-principal #Variables de entorno para la configuración de la base de datos (Nombre de la base de datos)
-      TZ: 'America/Bogota' #Variable de entorno para decirle al contenedor la zona horaria que debe seguir
-    volumes:
-      - postgres_data_principal:/var/lib/postgresql/data #Ruta para persistir datos sin importar si el contenedor se borra
-    networks:
-      - 'eureka-network' #Network a la cual estará conectada internamente con los otros contenedores
-
-  # DATABASE para SIASA-PRESTAMOS
-  #DB
-  siasa-prestamos-db:
-    container_name: siasa-prestamos-db #Nombre del contenedor que aparece en Docker
-    image: postgres:16-alpine #Imagen para cosntruir el servicio
-    ports:
-      - '5433:5432' #Puerto de salida, Puerto interno del contenedor
-    environment:
-      POSTGRES_USER: postgres #Variables de entorno para la configuración de la base de datos (Usuario)
-      POSTGRES_PASSWORD: postgres #Variables de entorno para la configuración de la base de datos (Contraseña)
-      POSTGRES_DB: siasa-prestamos #Variables de entorno para la configuración de la base de datos (Nombre de la base de datos)
-      TZ: 'America/Bogota' #Variable de entorno para decirle al contenedor la zona horaria que debe seguir
-    volumes:
-      - postgres_data_prestamos:/var/lib/postgresql/data #Ruta para persistir datos sin importar si el contenedor se borra
-    networks:
-      - 'eureka-network' #Network a la cual estará conectada internamente con los otros contenedores
+      - 'siasa-network' #Network a la cual estará conectada internamente con los otros contenedores
 
   # REACT FRONT 
   siasa-react-front:
@@ -193,7 +205,8 @@ services:
 
 #Networks
 networks:
-  eureka-network:
+  siasa-network:
+   driver: bridge
 
 #Volumes
 volumes:
