@@ -55,7 +55,7 @@ public class CodigoUServiceImpl implements CodigoUService {
     }
 
     private void limpiarCaches() {
-        String[] cacheNames = {"biblioteca", "rfid", "codigoU", "laboratorio", "salaComputo", "campus"};
+        String[] cacheNames = {"biblioteca-failover", "rfid-failover", "codigoU-failover", "laboratorio-failover", "salaComputo-failover", "campus-failover"};
         for (String cacheName : cacheNames) {
             Cache cache = cacheManager.getCache(cacheName);
             if (cache != null) {
@@ -66,7 +66,7 @@ public class CodigoUServiceImpl implements CodigoUService {
     }
 
     @Override
-    @Cacheable(value = "codigoU", key = "'findAll'")
+    @Cacheable(value = "codigoU-failover", key = "'findAll'")
     public ResponseEntity<List<CodigoUDto>> findAll() {
         List<CodigoU> codigoUS = codigoURepository.findAll();
         if (!codigoUS.isEmpty()) {
@@ -85,7 +85,7 @@ public class CodigoUServiceImpl implements CodigoUService {
     }
 
     @Override
-    @Cacheable(value = "codigoU", key = "'findAllP' + #pageNumber + #pageSize + #sortBy + #sortOrder")
+    @Cacheable(value = "codigoU-failover", key = "'findAllP' + #pageNumber + #pageSize + #sortBy + #sortOrder")
     public ResponseEntity<Page<CodigoUDto>> findAllP(int pageNumber, int pageSize, String sortBy, String sortOrder) {
         Sort sort = sortOrder.equalsIgnoreCase(Sort.Direction.ASC.name()) ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
         Pageable pageable = PageRequest.of(pageNumber, pageSize, sort);
@@ -104,7 +104,7 @@ public class CodigoUServiceImpl implements CodigoUService {
     }
 
     @Override
-    @Cacheable(value = "codigoU", key = "'findById' + #id")
+    @Cacheable(value = "codigoU-failover", key = "'findById' + #id")
     public ResponseEntity<CodigoUDto> findById(String id) {
         Optional<CodigoU> codigoUOptional = Optional.ofNullable(codigoURepository.findById(id)
                 .orElseThrow(() -> new MessageNotFoundException(String.format("La persona con código %s no existe", id))));
@@ -121,7 +121,7 @@ public class CodigoUServiceImpl implements CodigoUService {
     }
 
     @Override
-    @Cacheable(value = "codigoU", key = "'findByRfid' + #idRfid")
+    @Cacheable(value = "codigoU-failover", key = "'findByRfid' + #idRfid")
     public ResponseEntity<CodigoUDto> findByRfid(String idRfid) {
         if (!rfidRepository.existsById(idRfid)) {
             throw new MessageBadRequestException(String.format("El carnet con código %s no existe en base de datos", idRfid));
@@ -142,7 +142,7 @@ public class CodigoUServiceImpl implements CodigoUService {
     }
 
     @Override
-    @CacheEvict(value = "codigoU", allEntries = true)
+    @CacheEvict(value = "codigoU-failover", allEntries = true)
     public ResponseEntity<CodigoUDto> create(CodigoUDto codigoUDto) {
         if (codigoUDto.getIdCodigoU().isEmpty() || codigoUDto.getPrimerNombre().isEmpty() || codigoUDto.getPrimerApellido().isEmpty() || codigoUDto.getRfidDto().getIdRfid().isEmpty()) {
             log.warn("Los campos PrimerNombre, Primer Apellido, Codigo Universidad, Codigo Rfid son obligatorios");
@@ -179,7 +179,7 @@ public class CodigoUServiceImpl implements CodigoUService {
     }
 
     @Override
-    @CacheEvict(value = "codigoU", allEntries = true)
+    @CacheEvict(value = "codigoU-failover", allEntries = true)
     public ResponseEntity<CodigoUDto> update(String id, CodigoUDto codigoUDto) {
         try {
             CodigoU codigoU = codigoURepository.findById(id)
@@ -244,7 +244,7 @@ public class CodigoUServiceImpl implements CodigoUService {
 
 
     @Override
-    @CacheEvict(value = "codigoU", allEntries = true)
+    @CacheEvict(value = "codigoU-failover", allEntries = true)
     public ResponseEntity<String> delete(String id) {
         // Verificar si existen datos antes de eliminarlos
         boolean borrarBiblioteca = bibliotecaRepository.existsByCodigoUIdCodigoU(id);

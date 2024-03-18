@@ -52,7 +52,7 @@ public class SalaComputoServiceImpl implements SalaComputoService {
     }
 
     @Override
-    @Cacheable(value = "salaComputo", key = "'findAll'")
+    @Cacheable(value = "salaComputo-failover", key = "'findAll'")
     public ResponseEntity<List<SalaComputoDto>> findAll() {
         List<SalaComputo> salaComputoList = salaComputoRepository.findAll();
         if (!salaComputoList.isEmpty()) {
@@ -67,7 +67,7 @@ public class SalaComputoServiceImpl implements SalaComputoService {
     }
 
     @Override
-    @Cacheable(value = "salaComputo", key = "'findAllP' + #pageNumber + #pageSize + #sortBy + #sortOrder")
+    @Cacheable(value = "salaComputo-failover", key = "'findAllP' + #pageNumber + #pageSize + #sortBy + #sortOrder")
     public ResponseEntity<Page<SalaComputoDto>> findAllP(int pageNumber, int pageSize, String sortBy, String sortOrder) {
         Sort sort = sortOrder.equalsIgnoreCase(Sort.Direction.ASC.name()) ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
         Pageable pageable = PageRequest.of(pageNumber, pageSize, sort);
@@ -82,7 +82,7 @@ public class SalaComputoServiceImpl implements SalaComputoService {
     }
 
     @Override
-    @Cacheable(value = "salaComputo", key = "'findByCodigoUIdCodigoU' + #idCodigoU")
+    @Cacheable(value = "salaComputo-failover", key = "'findByCodigoUIdCodigoU' + #idCodigoU")
     public ResponseEntity<List<SalaComputoDto>> findByCodigoUIdCodigoU(String idCodigoU) {
         if (!codigoURepository.existsById(idCodigoU)) {
             throw new MessageBadRequestException(String.format("La persona con el código %s no existe en base de datos", idCodigoU));
@@ -100,7 +100,7 @@ public class SalaComputoServiceImpl implements SalaComputoService {
     }
 
     @Override
-    @CacheEvict(value = "salaComputo", allEntries = true)
+    @CacheEvict(value = "salaComputo-failover", allEntries = true)
     public ResponseEntity<SalaComputoDto> createIn(String idRfid, String salaDestino) {
         Optional<CodigoU> codigoUOptional = Optional.ofNullable(codigoURepository.findByRfidIdRfid(idRfid)
                 .orElseThrow(() -> new MessageNotFoundException(String.format("El carnet %s no registra en base de datos", idRfid))));
@@ -130,7 +130,7 @@ public class SalaComputoServiceImpl implements SalaComputoService {
     }
 
     @Override
-    @CacheEvict(value = "salaComputo", allEntries = true)
+    @CacheEvict(value = "salaComputo-failover", allEntries = true)
     public ResponseEntity<SalaComputoDto> createOut(String idRfid) {
         CodigoU codigoU = codigoURepository.findByRfidIdRfid(idRfid)
                 .orElseThrow(() -> new MessageNotFoundException(String.format("El carnet %s no registra en base de datos", idRfid)));
@@ -158,7 +158,7 @@ public class SalaComputoServiceImpl implements SalaComputoService {
     }
 
     @Override
-    @Cacheable(value = "salaComputo", key = "'existsByCodigoUIdCodigoU' + #idCodigoU")
+    @Cacheable(value = "salaComputo-failover", key = "'existsByCodigoUIdCodigoU' + #idCodigoU")
     public ResponseEntity<String> existsByCodigoUIdCodigoU(String idCodigoU) {
         if (!codigoURepository.existsById(idCodigoU)) {
             throw new MessageNotFoundException(String.format("La persona con el código %s no existe en base de datos", idCodigoU));
@@ -171,7 +171,7 @@ public class SalaComputoServiceImpl implements SalaComputoService {
     }
 
     @Override
-    @Cacheable(value = "salaComputo", key = "'findByFechaIngreso' + #fechaInicial + #fechaFinal")
+    @Cacheable(value = "salaComputo-failover", key = "'findByFechaIngreso' + #fechaInicial + #fechaFinal")
     public ResponseEntity<List<SalaComputoDto>> findByFechaIngreso(LocalDateTime fechaInicial, LocalDateTime fechaFinal) {
         List<SalaComputo> salaComputos = salaComputoRepository.findSalaComputosByFechaIngresoBetween(fechaInicial, fechaFinal);
         if (!salaComputos.isEmpty()) {
@@ -185,7 +185,7 @@ public class SalaComputoServiceImpl implements SalaComputoService {
     }
 
     @Override
-    @Cacheable(value = "salaComputo", key = "'findByFechaSalida' + #fechaInicial + #fechaFinal")
+    @Cacheable(value = "salaComputo-failover", key = "'findByFechaSalida' + #fechaInicial + #fechaFinal")
     public ResponseEntity<List<SalaComputoDto>> findByFechaSalida(LocalDateTime fechaInicial, LocalDateTime fechaFinal) {
         List<SalaComputo> salaComputos = salaComputoRepository.findSalaComputosByFechaSalidaBetween(fechaInicial, fechaFinal);
         if (!salaComputos.isEmpty()) {
@@ -199,7 +199,7 @@ public class SalaComputoServiceImpl implements SalaComputoService {
     }
 
     @Override
-    @Cacheable(value = "salaComputo", key = "'findByIdCodigoUAndFechaIngreso' + #idCodigoU + #fechaInicial + #fechaFinal")
+    @Cacheable(value = "salaComputo-failover", key = "'findByIdCodigoUAndFechaIngreso' + #idCodigoU + #fechaInicial + #fechaFinal")
     public ResponseEntity<List<SalaComputoDto>> findByIdCodigoUAndFechaIngreso(String idCodigoU, LocalDateTime fechaInicial, LocalDateTime fechaFinal) {
         if (!codigoURepository.existsById(idCodigoU)) {
             throw new MessageBadRequestException(String.format("La persona con el código %s no existe en base de datos", idCodigoU));
@@ -216,7 +216,7 @@ public class SalaComputoServiceImpl implements SalaComputoService {
     }
 
     @Override
-    @Cacheable(value = "salaComputo", key = "'findByIdCodigoUAndFechaSalida' + #idCodigoU + #fechaInicial + #fechaFinal")
+    @Cacheable(value = "salaComputo-failover", key = "'findByIdCodigoUAndFechaSalida' + #idCodigoU + #fechaInicial + #fechaFinal")
     public ResponseEntity<List<SalaComputoDto>> findByIdCodigoUAndFechaSalida(String idCodigoU, LocalDateTime fechaInicial, LocalDateTime fechaFinal) {
         if (!codigoURepository.existsById(idCodigoU)) {
             throw new MessageBadRequestException(String.format("La persona con el código %s no existe en base de datos", idCodigoU));
