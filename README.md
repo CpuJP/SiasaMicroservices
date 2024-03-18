@@ -7,7 +7,7 @@ This microservice is a crucial component of the SIASA architecture, a project wh
 
 The API documentation is available at the following route, based on OpenAPI 3:
 
-- [API Documentation](/swagger-ui/index.html#/)
+- [API Documentation](/auth/swagger-ui.html)
 
 ## Available Schemas
 
