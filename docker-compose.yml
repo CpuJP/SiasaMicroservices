@@ -35,6 +35,23 @@ services:
     networks:
       - 'siasa-network' #Network a la cual estará conectada internamente con los otros contenedores 
 
+  # DATABASE para SIASA-AUTH
+  #DB
+  siasa-auth-db:
+    container_name: siasa-auth-db #Nombre del contenedor que aparece en Docker
+    image: postgres:16-alpine #Imagen para cosntruir el servicio
+    ports:
+     - '5434:5432'
+    environment:
+      POSTGRES_USER: postgres #Variables de entorno para la configuración de la base de datos (Usuario)
+      POSTGRES_PASSWORD: postgres #Variables de entorno para la configuración de la base de datos (Contraseña)
+      POSTGRES_DB: siasa-auth #Variables de entorno para la configuración de la base de datos (Nombre de la base de datos)
+      TZ: 'America/Bogota' #Variable de entorno para decirle al contenedor la zona horaria que debe seguir
+    volumes:
+      - postgres_data_auth:/var/lib/postgresql/data #Ruta para persistir datos sin importar si el contenedor se borra
+    networks:
+      - 'siasa-network'
+
   # -----SIASA-ZIPKIN-----
   #THIRD PARTY SERVICE
   siasa-zipkin-service:
@@ -71,7 +88,7 @@ services:
   #SERVICE
   siasa-eureka-service:
     container_name: siasa-eureka-service #Nombre del contenedor que aparece en Docker
-    image: cpujuan/siasa-eureka-service:1.0 #Imagen para cosntruir el servicio
+    image: cpujuan/siasa-eureka-service:2.0 #Imagen para cosntruir el servicio
     build: . #Se construye desde la raíz
     ports:
       - '8761:8761' #Puerto de salida, Puerto interno del contenedor
@@ -82,11 +99,36 @@ services:
     networks:
       - 'siasa-network' #Network a la cual estará conectada internamente con los otros contenedores
 
+  # -----SIASA-AUTH-----
+  #APP
+  siasa-auth-app:
+    container_name: siasa-auth-app #Nombre del contenedor que aparece en Docker
+    image: cpujuan/siasa-auth-app:2.0 #Imagen para cosntruir el servicio
+    build: .
+    ports:
+      - '8489:8489'
+    environment:
+      - PROD_AUTH_DB_HOST=siasa-auth-db
+      - PROD_AUTH_DB_PORT=5432
+      - PROD_AUTH_DB_NAME=siasa-auth
+      - PROD_AUTH_DB_USERNAME=postgres
+      - PROD_AUTH_DB_PASSWORD=postgres
+      - JWT_KEY_SECRET=C977391AE834F8CCD257DA8A2B9398B4BA415C21B6BD1B566997661D46819B6253192F5D1249EB329416EB936494C9F5BBA514761B5833B9C47E
+      - ROOT_NAME=Siasa
+      - ROOT_EMAIL=cpujuanpis@gmai.com
+      - ROOT_PASSWORD=Siasa2024*
+      - spring.profiles.active=prod #variable de entorno que consume el servicio (Activar la configuración de producción del servicio)
+    depends_on:
+      - siasa-auth-db
+      - siasa-eureka-service #Este contenedor depende del servicio de eureka para poder funcionar correctamente
+    networks:
+      - 'siasa-network'
+
   # -----SIASA-PRINCIPAL-----
   #APP
   siasa-principal-app:
     container_name: siasa-principal-app #Nombre del contenedor que aparece en Docker
-    image: cpujuan/siasa-principal-app:1.2 #Imagen para cosntruir el servicio
+    image: cpujuan/siasa-principal-app:2.0 #Imagen para cosntruir el servicio
     build: . #Se construye desde la raíz
     ports:
       - '8484:8484' #Puerto de salida, Puerto interno del contenedor
@@ -108,7 +150,7 @@ services:
   #APP
   siasa-principal-failover-app:
     container_name: siasa-principal-failover-app #Nombre del contenedor que aparece en Docker
-    image: cpujuan/siasa-principal-failover-app:1.0 #Imagen para cosntruir el servicio
+    image: cpujuan/siasa-principal-failover-app:2.0 #Imagen para cosntruir el servicio
     build: . #Se construye desde la raíz
     ports:
       - '8488:8488' #Puerto de salida, Puerto interno del contenedor
@@ -130,7 +172,7 @@ services:
   # APP
   siasa-prestamos-app:
     container_name: siasa-prestamos-app #Nombre del contenedor que aparece en Docker
-    image: cpujuan/siasa-prestamos-app:1.1 #Imagen para cosntruir el servicio
+    image: cpujuan/siasa-prestamos-app:2.0 #Imagen para cosntruir el servicio
     build: . #Se construye desde la raíz
     ports:
       - '8485:8485' #Puerto de salida, Puerto interno del contenedor
@@ -157,7 +199,7 @@ services:
   # APP
   siasa-reportes-app:
     container_name: siasa-reportes-app #Nombre del contenedor que aparece en Docker
-    image: cpujuan/siasa-reportes-app:1.1 #Imagen para cosntruir el servicio
+    image: cpujuan/siasa-reportes-app:2.0 #Imagen para cosntruir el servicio
     build: . #Se construye desde la raíz
     ports:
       - '8486:8486' #Puerto de salida, Puerto interno del contenedor
@@ -179,7 +221,7 @@ services:
   #SERVICE
   siasa-gateway-service:
     container_name: siasa-gateway-service #Nombre del contenedor que aparece en Docker
-    image: cpujuan/siasa-gateway-service:1.0 #Imagen para cosntruir el servicio
+    image: cpujuan/siasa-gateway-service:2.0 #Imagen para cosntruir el servicio
     build: . #Se construye desde la raíz
     ports:
     - '8487:8487' #Puerto de salida, Puerto interno del contenedor
@@ -194,15 +236,6 @@ services:
     networks:
       - 'siasa-network' #Network a la cual estará conectada internamente con los otros contenedores
 
-  # REACT FRONT 
-  siasa-react-front:
-    container_name: siasa-react-front #Nombre del contenedor que aparece en Docker
-    image: crisfer23/siasa-react-front:1.2 #Imagen para cosntruir el servicio
-    ports:
-      - '3000:3000' #Puerto de la aplicación React
-    depends_on:
-      - siasa-gateway-service #Dependencia del servicio de gateway
-
 #Networks
 networks:
   siasa-network:
@@ -212,3 +245,4 @@ networks:
 volumes:
   postgres_data_principal: #Se le informa docker-compose que debe tener una ruta para su creación
   postgres_data_prestamos: #Se le informa docker-compose que debe tener una ruta para su creación
+  postgres_data_auth: #Se le informa docker-compose que debe tener una ruta para su creación
