@@ -51,3 +51,9 @@ scrape_configs:
     metrics_path: /actuator/prometheus
     static_configs:
       - targets: ["host.docker.internal:8487"]   # Agrega los objetivos que deseas rastrear.
+
+
+  - job_name: "siasa-auth-prod"
+    metrics_path: /actuator/prometheus
+    static_configs:
+      - targets: ["host.docker.internal:8489"]   # Agrega los objetivos que deseas rastrear.
