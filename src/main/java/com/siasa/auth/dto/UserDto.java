@@ -1,12 +1,10 @@
 package com.siasa.auth.dto;
 
-import com.siasa.auth.entity.User;
 import com.siasa.auth.enums.Role;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
-import java.io.Serializable;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

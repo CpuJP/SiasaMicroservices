@@ -1,6 +1,6 @@
 package com.siasa.auth.repository;
 
-import com.siasa.auth.entity.User;
+import com.siasa.auth.entity.Usuario;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
@@ -14,18 +14,18 @@ import java.util.Optional;
 
 @Repository
 @EnableJpaRepositories
-public interface UserRepository extends JpaRepository<User, Long>, JpaSpecificationExecutor<User> {
+public interface UserRepository extends JpaRepository<Usuario, Long>, JpaSpecificationExecutor<Usuario> {
 
     @Transactional(readOnly = true)
-    public Optional<User> findByName(String name);
+    public Optional<Usuario> findByName(String name);
 
     @Transactional(readOnly = true)
-    public Optional<User> findByEmail(String email);
+    public Optional<Usuario> findByEmail(String email);
 
-    @Query("SELECT u FROM User u JOIN FETCH u.roles WHERE u.id = :userId")
-    Optional<User> findByIdWithRoles(@Param("userId") Long userId);
+    @Query("SELECT u FROM Usuario u JOIN FETCH u.roles WHERE u.id = :userId")
+    Optional<Usuario> findByIdWithRoles(@Param("userId") Long userId);
 
-    @Query("SELECT DISTINCT u FROM User u JOIN FETCH u.roles")
-    List<User> findAllWithRoles();
+    @Query("SELECT DISTINCT u FROM Usuario u JOIN FETCH u.roles")
+    List<Usuario> findAllWithRoles();
 
 }

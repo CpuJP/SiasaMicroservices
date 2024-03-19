@@ -1,8 +1,7 @@
 package com.siasa.auth.service;
 
-import com.siasa.auth.config.JwtProvider;
 import com.siasa.auth.dto.UserDto;
-import com.siasa.auth.entity.User;
+import com.siasa.auth.entity.Usuario;
 import com.siasa.auth.enums.Role;
 import com.siasa.auth.exception.MessageNotFoundException;
 import com.siasa.auth.repository.UserRepository;
@@ -37,16 +36,16 @@ public class AdminService {
     }
 
 
-    private UserDto mapToDto(User user) {
-        TypeMap<User, UserDto> typeMap = modelMapper.typeMap(User.class, UserDto.class);
-        typeMap.addMapping(User::getRoles, UserDto::setRoles);
+    private UserDto mapToDto(Usuario user) {
+        TypeMap<Usuario, UserDto> typeMap = modelMapper.typeMap(Usuario.class, UserDto.class);
+        typeMap.addMapping(Usuario::getRoles, UserDto::setRoles);
         return typeMap.map(user);
     }
 
-    private UserDto mapToDtoWithOutPassword(User user) {
-        TypeMap<User, UserDto> typeMap = modelMapper.typeMap(User.class, UserDto.class);
+    private UserDto mapToDtoWithOutPassword(Usuario user) {
+        TypeMap<Usuario, UserDto> typeMap = modelMapper.typeMap(Usuario.class, UserDto.class);
         typeMap.addMapping(src -> "", UserDto::setPassword); // Excluir el campo de contraseña
-        typeMap.addMapping(User::getRoles, UserDto::setRoles);
+        typeMap.addMapping(Usuario::getRoles, UserDto::setRoles);
         return typeMap.map(user);
     }
 
@@ -64,7 +63,7 @@ public class AdminService {
 
     @Transactional
     public ResponseEntity<List<UserDto>> findAllWithRoles() {
-        List<User> users = userRepository.findAllWithRoles();
+        List<Usuario> users = userRepository.findAllWithRoles();
         if (!users.isEmpty()) {
             List<UserDto> userDtos = users.stream()
                     .map(this::mapToDto)
@@ -78,9 +77,9 @@ public class AdminService {
 
     @Transactional
     public ResponseEntity<UserDto> updateRoles(Long userId, List<String> newRoles) {
-        Optional<User> optionalUser = userRepository.findById(userId);
+        Optional<Usuario> optionalUser = userRepository.findById(userId);
         if (optionalUser.isPresent()) {
-            User user = optionalUser.get();
+            Usuario user = optionalUser.get();
             Set<Role> roles = newRoles.stream()
                     .map(String::toUpperCase) // Convertir a mayúsculas
                     .map(Role::valueOf) // Convertir los strings a roles enumerados
@@ -99,9 +98,9 @@ public class AdminService {
         // Validar la nueva contraseña
         validatePassword(newPassword);
 
-        Optional<User> optionalUser = userRepository.findById(userId);
+        Optional<Usuario> optionalUser = userRepository.findById(userId);
         if (optionalUser.isPresent()) {
-            User user = optionalUser.get();
+            Usuario user = optionalUser.get();
             String encodedPassword = passwordEncoder.encode(newPassword); // Codificar la nueva contraseña
             user.setPassword(encodedPassword);
             userRepository.save(user);
@@ -114,9 +113,9 @@ public class AdminService {
 
     @Transactional
     public ResponseEntity<Void> deleteUser(Long userId) {
-        Optional<User> optionalUser = userRepository.findById(userId);
+        Optional<Usuario> optionalUser = userRepository.findById(userId);
         if (optionalUser.isPresent()) {
-            User user = optionalUser.get();
+            Usuario user = optionalUser.get();
             userRepository.delete(user);
             return ResponseEntity.ok().build();
         } else {

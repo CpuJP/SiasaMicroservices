@@ -1,20 +1,15 @@
 package com.siasa.auth.config;
 
-import com.siasa.auth.dto.UserDto;
-import com.siasa.auth.entity.User;
+import com.siasa.auth.entity.Usuario;
 import com.siasa.auth.enums.Role;
 import com.siasa.auth.repository.UserRepository;
 import com.siasa.auth.service.AuthService;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.HashSet;
 import java.util.Optional;
@@ -48,13 +43,13 @@ public class DefaultUserInitializer implements ApplicationRunner {
     @Override
     public void run(ApplicationArguments args) throws Exception {
         // Verificar si el usuario ya está registrado
-        Optional<User> existingUser = userRepository.findByName(name);
+        Optional<Usuario> existingUser = userRepository.findByName(name);
         if (existingUser.isPresent()) {
             // Si el usuario ya está presente, envía un registro de alerta y termina
             log.warn("El usuario {} ya está registrado. No se creará otro.", name);
             return;
         }
-        Optional<User> existingEmail = userRepository.findByEmail(email);
+        Optional<Usuario> existingEmail = userRepository.findByEmail(email);
         if (existingEmail.isPresent()) {
             log.warn("El Email {} ya está registrado. No se creará otro.", email);
             return;
@@ -67,7 +62,7 @@ public class DefaultUserInitializer implements ApplicationRunner {
 
         String encodedPassword = passwordEncoder.encode(password);
 
-        User newUser = new User();
+        Usuario newUser = new Usuario();
         newUser.setName(name);
         newUser.setEmail(email);
         newUser.setPassword(encodedPassword);

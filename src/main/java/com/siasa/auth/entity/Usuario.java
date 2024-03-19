@@ -17,7 +17,7 @@ import java.util.regex.Pattern;
 @Getter
 @Setter
 @Builder
-public class User {
+public class Usuario {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -49,7 +49,7 @@ public class User {
     }
 
     @ElementCollection(targetClass = Role.class)
-    @CollectionTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"))
+    @CollectionTable(name = "usuario_roles", joinColumns = @JoinColumn(name = "usuario_id"))
     @Enumerated(EnumType.STRING)
     private Set<Role> roles;
 

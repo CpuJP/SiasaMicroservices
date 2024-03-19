@@ -4,7 +4,7 @@ import com.siasa.auth.config.JwtProvider;
 import com.siasa.auth.dto.TokenDto;
 import com.siasa.auth.dto.UserDto;
 import com.siasa.auth.dto.UserDtoLogin;
-import com.siasa.auth.entity.User;
+import com.siasa.auth.entity.Usuario;
 import com.siasa.auth.enums.Role;
 import com.siasa.auth.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -18,16 +18,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
-
-import java.lang.reflect.Type;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -45,16 +38,16 @@ public class AuthService {
         this.jwtProvider = jwtProvider;
     }
 
-    private UserDto mapToDto(User user) {
-        TypeMap<User, UserDto> typeMap = modelMapper.typeMap(User.class, UserDto.class);
-        typeMap.addMapping(User::getRoles, UserDto::setRoles);
+    private UserDto mapToDto(Usuario user) {
+        TypeMap<Usuario, UserDto> typeMap = modelMapper.typeMap(Usuario.class, UserDto.class);
+        typeMap.addMapping(Usuario::getRoles, UserDto::setRoles);
         return typeMap.map(user);
     }
 
-    private UserDto mapToDtoWithOutPassword(User user) {
-        TypeMap<User, UserDto> typeMap = modelMapper.typeMap(User.class, UserDto.class);
+    private UserDto mapToDtoWithOutPassword(Usuario user) {
+        TypeMap<Usuario, UserDto> typeMap = modelMapper.typeMap(Usuario.class, UserDto.class);
         typeMap.addMapping(src -> "", UserDto::setPassword); // Excluir el campo de contraseña
-        typeMap.addMapping(User::getRoles, UserDto::setRoles);
+        typeMap.addMapping(Usuario::getRoles, UserDto::setRoles);
         return typeMap.map(user);
     }
 
@@ -64,12 +57,12 @@ public class AuthService {
             throw new IllegalArgumentException("Nombre, correo electrónico y contraseña son obligatorios");
         }
 
-        Optional<User> existingUser = userRepository.findByName(userDto.getName());
+        Optional<Usuario> existingUser = userRepository.findByName(userDto.getName());
         if (existingUser.isPresent()) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, String.format("El usuario %s ya se encuentra registrado", userDto.getName()));
         }
 
-        Optional<User> existingEmail = userRepository.findByEmail(userDto.getEmail());
+        Optional<Usuario> existingEmail = userRepository.findByEmail(userDto.getEmail());
         if (existingEmail.isPresent()) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, String.format("El email %s ya se encuentra registrado", userDto.getEmail()));
         }
@@ -80,13 +73,13 @@ public class AuthService {
 
         String encodedPassword = passwordEncoder.encode(userDto.getPassword());
 
-        User newUser = new User();
+        Usuario newUser = new Usuario();
         newUser.setName(userDto.getName());
         newUser.setEmail(userDto.getEmail());
         newUser.setPassword(encodedPassword);
         newUser.setRoles(roles);
 
-        User savedUser = userRepository.save(newUser);
+        Usuario savedUser = userRepository.save(newUser);
 
         userDto = mapToDto(savedUser);
         return new ResponseEntity<>(userDto, HttpStatus.CREATED);
@@ -94,7 +87,7 @@ public class AuthService {
 
     @Transactional
     public ResponseEntity<TokenDto> login(UserDtoLogin userDto) {
-        User user = userRepository.findByName(userDto.getName()).orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST));
+        Usuario user = userRepository.findByName(userDto.getName()).orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST));
 
         if (passwordEncoder.matches(userDto.getPassword(), user.getPassword())) {
             String token = jwtProvider.createToken(user.getName());
@@ -129,14 +122,14 @@ public class AuthService {
         userName = userName.replace("{", "").replace("}", "");
         String[] split = userName.split(",");
         String subValue = split[0].replace("sub=", "");
-        Optional<User> userOptionalId = userRepository.findByName(subValue);
+        Optional<Usuario> userOptionalId = userRepository.findByName(subValue);
 
         // Buscamos el usuario en la base de datos utilizando el nombre de usuario
-        Optional<User> userOptional = userRepository.findByIdWithRoles(userOptionalId.get().getId());
+        Optional<Usuario> userOptional = userRepository.findByIdWithRoles(userOptionalId.get().getId());
 
         // Si el usuario existe, devolvemos los roles asociados a dicho usuario
         if (userOptional.isPresent()) {
-            User user = userOptional.get();
+            Usuario user = userOptional.get();
             return new ResponseEntity<>(user.getRoles(), HttpStatus.OK);
         } else {
             // En caso de que el usuario no exista, puedes manejar este caso como mejor convenga a tu aplicación

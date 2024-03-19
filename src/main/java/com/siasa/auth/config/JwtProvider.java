@@ -1,24 +1,19 @@
 package com.siasa.auth.config;
 
-import com.siasa.auth.entity.User;
-import com.siasa.auth.enums.Role;
+import com.siasa.auth.entity.Usuario;
 import com.siasa.auth.repository.UserRepository;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
-import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.security.Key;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Component
 public class JwtProvider {
@@ -58,11 +53,11 @@ public class JwtProvider {
 //    }
 
     public String createToken(String userName) {
-        User user = userRepository.findByName(userName)
+        Usuario user = userRepository.findByName(userName)
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
 
         // Utiliza el método findByIdWithRoles para cargar los roles del usuario
-        User userWithRoles = userRepository.findByIdWithRoles(user.getId())
+        Usuario userWithRoles = userRepository.findByIdWithRoles(user.getId())
                 .orElseThrow(() -> new IllegalArgumentException("User with roles not found"));
 
         Map<String, Object> claims = Jwts.claims().setSubject(userWithRoles.getName());
