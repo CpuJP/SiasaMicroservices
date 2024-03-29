@@ -1126,6 +1126,11 @@ public class GatewayConfig {
 
 
                 //SIASA-PRESTAMOS
+                .route(predicateSpec -> predicateSpec.path("/prestamos/swagger-ui/**")
+                        .uri("lb://siasa-prestamos-prod")
+                )
+                .route(predicateSpec -> predicateSpec.path("/prestamos/v3")
+                        .uri("lb://siasa-prestamos-prod"))
                 .route(predicateSpec -> predicateSpec.path("/materialdeportivo/**")
                         .filters(gatewayFilterSpec -> gatewayFilterSpec.filters(authFilter))
                         .uri("lb://siasa-prestamos-prod"))
@@ -1143,6 +1148,11 @@ public class GatewayConfig {
                         .uri("lb://siasa-prestamos-prod"))
 
                 //SIASA-REPORTES
+                .route(predicateSpec -> predicateSpec.path("/reportes/swagger-ui/**")
+                        .uri("lb://siasa-prestamos-prod")
+                )
+                .route(predicateSpec -> predicateSpec.path("/reportes/v3")
+                        .uri("lb://siasa-prestamos-prod"))
                 .route(predicateSpec -> predicateSpec.path("/report/**")
                         .filters(gatewayFilterSpec -> gatewayFilterSpec.filters(authFilter))
                         .uri("lb://siasa-reportes-prod"))
