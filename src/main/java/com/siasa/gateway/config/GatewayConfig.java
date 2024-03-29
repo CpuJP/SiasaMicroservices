@@ -1147,7 +1147,7 @@ public class GatewayConfig {
 
                 //SIASA-REPORTES
                 .route(predicateSpec -> predicateSpec.path("/reportesdoc/**")
-                        .uri("lb://siasa-prestamos-prod")
+                        .uri("lb://siasa-reportes-prod")
                 )
                 .route(predicateSpec -> predicateSpec.path("/report/**")
                         .filters(gatewayFilterSpec -> gatewayFilterSpec.filters(authFilter))
