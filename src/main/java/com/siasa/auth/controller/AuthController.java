@@ -30,7 +30,7 @@ public class AuthController {
         this.authService = authService;
     }
 
-    @GetMapping("/login")
+    @PostMapping("/login")
     @Operation(summary = "Login a User",
         responses = {
             @ApiResponse(responseCode = "200", description = "OK - Ingreso correcto, Token generado"),
