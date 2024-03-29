@@ -221,7 +221,7 @@ services:
   #SERVICE
   siasa-gateway-service:
     container_name: siasa-gateway-service #Nombre del contenedor que aparece en Docker
-    image: cpujuan/siasa-gateway-service:2.0 #Imagen para cosntruir el servicio
+    image: cpujuan/siasa-gateway-service:2.1 #Imagen para cosntruir el servicio
     build: . #Se construye desde la raíz
     ports:
       - '8487:8487' #Puerto de salida, Puerto interno del contenedor
