@@ -30,9 +30,13 @@ This architecture handles different projects:
 
 7. **[siasa-auth](https://github.com/CpuJP/SiasaMicroservices/tree/siasa-auth) ->** This microservice is the natural part where the JWT tokens generated will be generated and validated for use as security for the SIASA software.
 
-8. **[zipkin](http://localhost:9411) ->** This microservice provided by a third party helps us centralize the traceability of the logs released by each microservice.
+8. **[siasa-front](https://github.com/CrisMontejo23/SiasaFront) ->** This microservice is a fundamental pillar, since it provides the graphical interface that SIASA needs for its correct functioning.
 
-9. **[prometheus](http://localhost:9090) ->** This microservice provided by a third party helps us centralize the monitoring of the different metrics of the siasa architecture.
+9. **[zipkin](http://localhost:9411) ->** This microservice provided by a third party helps us centralize the traceability of the logs released by each microservice.
+
+10. **[prometheus](http://localhost:9090) ->** This microservice provided by a third party helps us centralize the monitoring of the different metrics of the siasa architecture.
+
+11. **[grafana](http://localhost:3000) ->** This microservice provided by a third party helps us graphically see relevant information about our architecture in different dashboards provided by the community.
 
 
 ## Front-End proposal
