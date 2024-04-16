@@ -184,9 +184,9 @@ services:
       - PROD_P_DB_PASSWORD=postgres #variable de entorno que consume el servicio (Contraseña de acceso a la base de datos)
       - spring.profiles.active=prod #variable de entorno que consume el servicio (Activar la configuración de producción del servicio)
       - TZ=America/Bogota #Variable de entorno para decirle al contenedor la zona horaria que debe seguir
-      - API_SIASA_PRINCIPAL_BY_RFID=http://siasa-gateway-service:8487/codigou/rfid/{idRfid} #variable de entorno que consume el servicio (Consumo API Externa)
-      - API_SIASA_EXISTS_RFID=http://siasa-gateway-service:8487/rfid/{id} #variable de entorno que consume el servicio (Consumo API Externa)
-      - API_SIASA_EXISTS_UDEC=http://siasa-gateway-service:8487/codigou/{id} #variable de entorno que consume el servicio (Consumo API Externa)
+      - API_SIASA_PRINCIPAL_BY_RFID=http://siasa-principal-app:8484/codigou/rfid/{idRfid} #variable de entorno que consume el servicio (Consumo API Externa)
+      - API_SIASA_EXISTS_RFID=http://siasa-principal-app:8484/rfid/{id} #variable de entorno que consume el servicio (Consumo API Externa)
+      - API_SIASA_EXISTS_UDEC=http://siasa-principal-app:8484/codigou/{id} #variable de entorno que consume el servicio (Consumo API Externa)
     depends_on:
       - siasa-prestamos-db #Este contenedor depende de la base de datos para poder funcionar correctamente
       - siasa-principal-app #Este contenedor depende del contenedor derl servicio principal para funcionar correctamente
@@ -239,7 +239,7 @@ services:
   # REACT FRONT 
   siasa-react-front:
     container_name: siasa-react-front #Nombre del contenedor que aparece en Docker
-    image: crisfer23/siasa-react-front:2.0 #Imagen para cosntruir el servicio
+    image: crisfer23/siasa-react-front:2.1 #Imagen para cosntruir el servicio
     ports:
       - '3001:3001' #Puerto de la aplicación React
     depends_on:
