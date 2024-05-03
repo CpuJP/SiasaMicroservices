@@ -128,7 +128,7 @@ services:
   #APP
   siasa-principal-app:
     container_name: siasa-principal-app #Nombre del contenedor que aparece en Docker
-    image: cpujuan/siasa-principal-app:2.0 #Imagen para cosntruir el servicio
+    image: cpujuan/siasa-principal-app:2.1 #Imagen para cosntruir el servicio
     build: . #Se construye desde la raíz
     ports:
       - '8484:8484' #Puerto de salida, Puerto interno del contenedor
@@ -150,7 +150,7 @@ services:
   #APP
   siasa-principal-failover-app:
     container_name: siasa-principal-failover-app #Nombre del contenedor que aparece en Docker
-    image: cpujuan/siasa-principal-failover-app:2.0 #Imagen para cosntruir el servicio
+    image: cpujuan/siasa-principal-failover-app:2.1 #Imagen para cosntruir el servicio
     build: . #Se construye desde la raíz
     ports:
       - '8488:8488' #Puerto de salida, Puerto interno del contenedor
@@ -221,7 +221,7 @@ services:
   #SERVICE
   siasa-gateway-service:
     container_name: siasa-gateway-service #Nombre del contenedor que aparece en Docker
-    image: cpujuan/siasa-gateway-service:2.1 #Imagen para cosntruir el servicio
+    image: cpujuan/siasa-gateway-service:2.2 #Imagen para cosntruir el servicio
     build: . #Se construye desde la raíz
     ports:
       - '8487:8487' #Puerto de salida, Puerto interno del contenedor
@@ -239,7 +239,7 @@ services:
   # REACT FRONT 
   siasa-react-front:
     container_name: siasa-react-front #Nombre del contenedor que aparece en Docker
-    image: crisfer23/siasa-react-front:2.2 #Imagen para cosntruir el servicio
+    image: crisfer23/siasa-react-front:2.1 #Imagen para cosntruir el servicio
     ports:
       - '3001:3001' #Puerto de la aplicación React
     depends_on:
