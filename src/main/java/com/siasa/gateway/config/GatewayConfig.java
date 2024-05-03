@@ -168,6 +168,17 @@ public class GatewayConfig {
                         })
                         .uri("lb://siasa-principal-dev"))
 
+                .route(predicateSpec -> predicateSpec.path("/salacomputo/codigou/idrfid/{idRfid}")
+                        .filters(gatewayFilterSpec -> {
+                            gatewayFilterSpec.circuitBreaker
+                                    (config -> config.setName("salacomputoCodigoUIdRfidFailoverCB")
+                                            .setFallbackUri("forward:/salacomputo-failover/codigou/idrfid/%7BidRfid%7D")
+                                            .setRouteId("dbFailoverSalaComputoCodigoUIdRfid"));
+                            gatewayFilterSpec.filter(authFilter);
+                            return gatewayFilterSpec;
+                        })
+                        .uri("lb://siasa-principal-dev"))
+
                 .route(predicateSpec -> predicateSpec.path("/salacomputo/exists/{idCodigoU}")
                         .filters(gatewayFilterSpec -> {
                             gatewayFilterSpec.circuitBreaker
@@ -279,6 +290,17 @@ public class GatewayConfig {
                         })
                         .uri("lb://siasa-principal-dev"))
 
+                .route(predicateSpec -> predicateSpec.path("/biblioteca/codigou/idrfid/{idRfid}")
+                        .filters(gatewayFilterSpec -> {
+                            gatewayFilterSpec.circuitBreaker
+                                    (config -> config.setName("bibliotecaCodigoUIdRfidFailoverCB")
+                                            .setFallbackUri("forward:/biblioteca-failover/codigou/idrfid/%7BidRfid%7D")
+                                            .setRouteId("dbFailoverBibliotecaCodigoUIdRfid"));
+                            gatewayFilterSpec.filter(authFilter);
+                            return gatewayFilterSpec;
+                        })
+                        .uri("lb://siasa-principal-dev"))
+
                 .route(predicateSpec -> predicateSpec.path("/biblioteca/exists/{idCodigoU}")
                         .filters(gatewayFilterSpec -> {
                             gatewayFilterSpec.circuitBreaker
@@ -357,6 +379,17 @@ public class GatewayConfig {
                         })
                         .uri("lb://siasa-principal-dev"))
 
+                .route(predicateSpec -> predicateSpec.path("/campus/codigou/idrfid/{idRfid}")
+                        .filters(gatewayFilterSpec -> {
+                            gatewayFilterSpec.circuitBreaker
+                                    (config -> config.setName("campusCodigoUIdRfidFailoverCB")
+                                            .setFallbackUri("forward:/campus-failover/codigou/idrfid/%7BidRfid%7D")
+                                            .setRouteId("dbFailoverCampusCodigoUIdRfid"));
+                            gatewayFilterSpec.filter(authFilter);
+                            return gatewayFilterSpec;
+                        })
+                        .uri("lb://siasa-principal-dev"))
+
                 .route(predicateSpec -> predicateSpec.path("/campus/exists/{idCodigoU}")
                         .filters(gatewayFilterSpec -> {
                             gatewayFilterSpec.circuitBreaker
@@ -431,6 +464,17 @@ public class GatewayConfig {
                                             .setFallbackUri("forward:/laboratorio-failover/codigou/%7BidCodigoU%7D")
                                             .setRouteId("dbFailoveLaboratorioIdCodigoU"));
                             gatewayFilterSpec.filters(authFilter);
+                            return gatewayFilterSpec;
+                        })
+                        .uri("lb://siasa-principal-dev"))
+
+                .route(predicateSpec -> predicateSpec.path("/laboratorio/codigou/idrfid/{idRfid}")
+                        .filters(gatewayFilterSpec -> {
+                            gatewayFilterSpec.circuitBreaker
+                                    (config -> config.setName("laboratorioCodigoUIdRfidFailoverCB")
+                                            .setFallbackUri("forward:/laboratorio-failover/codigou/idrfid/%7BidRfid%7D")
+                                            .setRouteId("dbFailoverLaboratorioCodigoUIdRfid"));
+                            gatewayFilterSpec.filter(authFilter);
                             return gatewayFilterSpec;
                         })
                         .uri("lb://siasa-principal-dev"))
@@ -737,6 +781,17 @@ public class GatewayConfig {
                         })
                         .uri("lb://siasa-principal-prod"))
 
+                .route(predicateSpec -> predicateSpec.path("/salacomputo/codigou/idrfid/{idRfid}")
+                        .filters(gatewayFilterSpec -> {
+                            gatewayFilterSpec.circuitBreaker
+                                    (config -> config.setName("salacomputoCodigoUIdRfidFailoverCB")
+                                            .setFallbackUri("forward:/salacomputo-failover/codigou/idrfid/%7BidRfid%7D")
+                                            .setRouteId("dbFailoverSalaComputoCodigoUIdRfid"));
+                            gatewayFilterSpec.filter(authFilter);
+                            return gatewayFilterSpec;
+                        })
+                        .uri("lb://siasa-principal-prod"))
+
                 .route(predicateSpec -> predicateSpec.path("/salacomputo/exists/{idCodigoU}")
                         .filters(gatewayFilterSpec -> {
                             gatewayFilterSpec.circuitBreaker
@@ -848,6 +903,17 @@ public class GatewayConfig {
                         })
                         .uri("lb://siasa-principal-prod"))
 
+                .route(predicateSpec -> predicateSpec.path("/biblioteca/codigou/idrfid/{idRfid}")
+                        .filters(gatewayFilterSpec -> {
+                            gatewayFilterSpec.circuitBreaker
+                                    (config -> config.setName("bibliotecaCodigoUIdRfidFailoverCB")
+                                            .setFallbackUri("forward:/biblioteca-failover/codigou/idrfid/%7BidRfid%7D")
+                                            .setRouteId("dbFailoverBibliotecaCodigoUIdRfid"));
+                            gatewayFilterSpec.filter(authFilter);
+                            return gatewayFilterSpec;
+                        })
+                        .uri("lb://siasa-principal-prod"))
+
                 .route(predicateSpec -> predicateSpec.path("/biblioteca/exists/{idCodigoU}")
                         .filters(gatewayFilterSpec -> {
                             gatewayFilterSpec.circuitBreaker
@@ -926,6 +992,17 @@ public class GatewayConfig {
                         })
                         .uri("lb://siasa-principal-prod"))
 
+                .route(predicateSpec -> predicateSpec.path("/campus/codigou/idrfid/{idRfid}")
+                        .filters(gatewayFilterSpec -> {
+                            gatewayFilterSpec.circuitBreaker
+                                    (config -> config.setName("campusCodigoUIdRfidFailoverCB")
+                                            .setFallbackUri("forward:/campus-failover/codigou/idrfid/%7BidRfid%7D")
+                                            .setRouteId("dbFailoverCampusCodigoUIdRfid"));
+                            gatewayFilterSpec.filter(authFilter);
+                            return gatewayFilterSpec;
+                        })
+                        .uri("lb://siasa-principal-prod"))
+
                 .route(predicateSpec -> predicateSpec.path("/campus/exists/{idCodigoU}")
                         .filters(gatewayFilterSpec -> {
                             gatewayFilterSpec.circuitBreaker
@@ -1000,6 +1077,17 @@ public class GatewayConfig {
                                             .setFallbackUri("forward:/laboratorio-failover/codigou/%7BidCodigoU%7D")
                                             .setRouteId("dbFailoveLaboratorioIdCodigoU"));
                             gatewayFilterSpec.filters(authFilter);
+                            return gatewayFilterSpec;
+                        })
+                        .uri("lb://siasa-principal-prod"))
+
+                .route(predicateSpec -> predicateSpec.path("/laboratorio/codigou/idrfid/{idRfid}")
+                        .filters(gatewayFilterSpec -> {
+                            gatewayFilterSpec.circuitBreaker
+                                    (config -> config.setName("laboratorioCodigoUIdRfidFailoverCB")
+                                            .setFallbackUri("forward:/laboratorio-failover/codigou/idrfid/%7BidRfid%7D")
+                                            .setRouteId("dbFailoverLaboratorioCodigoUIdRfid"));
+                            gatewayFilterSpec.filter(authFilter);
                             return gatewayFilterSpec;
                         })
                         .uri("lb://siasa-principal-prod"))
