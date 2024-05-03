@@ -28,4 +28,7 @@ public interface BibliotecaRepository extends JpaRepository<Biblioteca, Integer>
 
     @Transactional(readOnly = true)
     List<Biblioteca> findBibliotecasByCodigoUIdCodigoUAndFechaIngresoBetween(String idCodigoU, LocalDateTime fechaInicial, LocalDateTime fechaFinal);
+
+    @Transactional(readOnly = true)
+    List<Biblioteca> findBibliotecasByCodigoURfidIdRfid(String idRfid);
 }

@@ -26,6 +26,8 @@ public interface LaboratorioService {
 
     ResponseEntity<String> existsByCodigoUIdCodigoU(@PathVariable String idCodigoU);
 
+    ResponseEntity<List<LaboratorioDto>> findByIdRfid(@PathVariable String idRfid);
+
     ResponseEntity<List<LaboratorioDto>> findByFechaIngreso(@RequestParam LocalDateTime fechaInicial,
                                                             @RequestParam LocalDateTime fechaFinal);
 

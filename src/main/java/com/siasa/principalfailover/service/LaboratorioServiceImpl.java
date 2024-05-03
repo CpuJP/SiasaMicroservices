@@ -9,6 +9,7 @@ import com.siasa.principalfailover.exception.MessageConflictException;
 import com.siasa.principalfailover.exception.MessageNotFoundException;
 import com.siasa.principalfailover.repository.CodigoURepository;
 import com.siasa.principalfailover.repository.LaboratorioRepository;
+import com.siasa.principalfailover.repository.RfidRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeMap;
@@ -36,11 +37,13 @@ public class LaboratorioServiceImpl implements LaboratorioService {
     private final LaboratorioRepository laboratorioRepository;
     private final ModelMapper modelMapper;
     private final CodigoURepository codigoURepository;
+    private final RfidRepository rfidRepository;
 
-    public LaboratorioServiceImpl(LaboratorioRepository laboratorioRepository, ModelMapper modelMapper, CodigoURepository codigoURepository) {
+    public LaboratorioServiceImpl(LaboratorioRepository laboratorioRepository, ModelMapper modelMapper, CodigoURepository codigoURepository, RfidRepository rfidRepository) {
         this.laboratorioRepository = laboratorioRepository;
         this.modelMapper = modelMapper;
         this.codigoURepository = codigoURepository;
+        this.rfidRepository = rfidRepository;
     }
 
     private LaboratorioDto mapToDto(Laboratorio laboratorio) {
@@ -168,6 +171,23 @@ public class LaboratorioServiceImpl implements LaboratorioService {
             return ResponseEntity.ok(String.format("La persona con código %s si registra ingresos al laboratorio", idCodigoU));
         } else {
             throw new MessageNotFoundException(String.format("La persona con código %s NO registra ingresos al laboratorio", idCodigoU));
+        }
+    }
+
+    @Override
+    @Cacheable(value = "laboratorio-failover", key = "'findByIdrfid' + #idRfid")
+    public ResponseEntity<List<LaboratorioDto>> findByIdRfid(String idRfid) {
+        if (!rfidRepository.existsById(idRfid)) {
+            throw new MessageBadRequestException(String.format("La persona con el ifRfid %s no registra en base de datos", idRfid));
+        }
+        List<Laboratorio> laboratorios = laboratorioRepository.findLaboratoriosByCodigoURfidIdRfid(idRfid);
+        if (!laboratorios.isEmpty()) {
+            List<LaboratorioDto> laboratorioDtos = laboratorios.stream()
+                    .map(this::mapToDto)
+                    .collect(Collectors.toList());
+            return new ResponseEntity<>(laboratorioDtos, HttpStatus.OK);
+        } else {
+            throw new MessageNotFoundException(String.format("NO hay registro de ingresos para el usuario con IdRfid %s", idRfid));
         }
     }
 

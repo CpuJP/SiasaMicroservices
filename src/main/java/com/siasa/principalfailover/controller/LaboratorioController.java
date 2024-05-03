@@ -94,6 +94,28 @@ public class LaboratorioController {
         return laboratorioService.findByCodigoUIdCodigoU(idCodigoU);
     }
 
+    @GetMapping("/codigou/idrfid/{idRfid}")
+    @Operation(summary = "Get all access to the Laboratorio by IdRfid",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "OK - Datos encontrados",
+                            content = @Content(mediaType = "application/json",
+                                    schema = @Schema(implementation = LaboratorioDto.class))),
+                    @ApiResponse(responseCode = "400", description = "Bad Request - Datos no existentes",
+                            content = @Content(mediaType = "application/json",
+                                    schema = @Schema(implementation = ErrorResponseDto.class))),
+                    @ApiResponse(responseCode = "404", description = "Not Found - Datos no existentes",
+                            content = @Content(mediaType = "application/json",
+                                    schema = @Schema(implementation = ErrorResponseDto.class))),
+                    @ApiResponse(responseCode = "500", description = "Internal Server Error - Error interno del servidor",
+                            content = @Content(schema = @Schema(hidden = true)))
+            })
+    public ResponseEntity<List<LaboratorioDto>> findByIdRfid(
+            @Parameter(name = "idRfid", description = "Id del carnet a buscar",
+                    in = ParameterIn.PATH, example = "MN:0L:AA:8T", schema = @Schema(type = "string"))
+            @PathVariable String idRfid) {
+        return laboratorioService.findByIdRfid(idRfid);
+    }
+
     @GetMapping("/exists/{idCodigoU}")
     @Operation(summary = "Get if there is entrance to the laboratory",
         responses = {

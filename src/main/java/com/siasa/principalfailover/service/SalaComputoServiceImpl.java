@@ -8,6 +8,7 @@ import com.siasa.principalfailover.exception.MessageBadRequestException;
 import com.siasa.principalfailover.exception.MessageConflictException;
 import com.siasa.principalfailover.exception.MessageNotFoundException;
 import com.siasa.principalfailover.repository.CodigoURepository;
+import com.siasa.principalfailover.repository.RfidRepository;
 import com.siasa.principalfailover.repository.SalaComputoRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -36,11 +37,13 @@ public class SalaComputoServiceImpl implements SalaComputoService {
     private final SalaComputoRepository salaComputoRepository;
     private final ModelMapper modelMapper;
     private final CodigoURepository codigoURepository;
+    private final RfidRepository rfidRepository;
 
-    public SalaComputoServiceImpl(SalaComputoRepository salaComputoRepository, ModelMapper modelMapper, CodigoURepository codigoURepository) {
+    public SalaComputoServiceImpl(SalaComputoRepository salaComputoRepository, ModelMapper modelMapper, CodigoURepository codigoURepository, RfidRepository rfidRepository) {
         this.salaComputoRepository = salaComputoRepository;
         this.modelMapper = modelMapper;
         this.codigoURepository = codigoURepository;
+        this.rfidRepository = rfidRepository;
     }
 
     private SalaComputoDto mapToDto(SalaComputo salaComputo) {
@@ -167,6 +170,23 @@ public class SalaComputoServiceImpl implements SalaComputoService {
             return ResponseEntity.ok(String.format("La persona con código %s si registra ingreso a la sala de cómputo", idCodigoU));
         } else {
             throw new MessageNotFoundException(String.format("La persona con código %s NO registra ingresos a la sala de cómputo", idCodigoU));
+        }
+    }
+
+    @Override
+    @Cacheable(value = "salaComputo-failover", key = "'findByIdRfid' + #idRfid")
+    public ResponseEntity<List<SalaComputoDto>> findByIdRfid(String idRfid) {
+        if (!rfidRepository.existsById(idRfid)) {
+            throw new MessageBadRequestException(String.format("La persona con el idRfid %s no registra en base de datos", idRfid));
+        }
+        List<SalaComputo> salaComputos = salaComputoRepository.findSalaComputosByCodigoURfidIdRfid(idRfid);
+        if (!salaComputos.isEmpty()) {
+            List<SalaComputoDto> salaComputoDtos = salaComputos.stream()
+                    .map(this::mapToDto)
+                    .collect(Collectors.toList());
+            return new ResponseEntity<>(salaComputoDtos, HttpStatus.OK);
+        } else {
+            throw new MessageNotFoundException(String.format("NO hay registro de ingresos para el usuario con IdRfid %s", idRfid));
         }
     }
 

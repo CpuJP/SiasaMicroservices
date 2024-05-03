@@ -94,6 +94,26 @@ public class SalaComputoController {
         return salaComputoService.findByCodigoUIdCodigoU(idCodigoU);
     }
 
+    @GetMapping("/codigou/idrfid/{idRfid}")
+    @Operation(summary = "Get all access to the Sala Cómputo by IdRfid",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "OK - Datos encontrados",
+                            content = @Content(mediaType = "application/json",
+                                    schema = @Schema(implementation = SalaComputoDto.class))),
+                    @ApiResponse(responseCode = "400", description = "Bad Request - Datos no existentes",
+                            content = @Content(mediaType = "application/json",
+                                    schema = @Schema(implementation = ErrorResponseDto.class))),
+                    @ApiResponse(responseCode = "404", description = "Not Found - Datos no existentes",
+                            content = @Content(mediaType = "application/json",
+                                    schema = @Schema(implementation = ErrorResponseDto.class))),
+                    @ApiResponse(responseCode = "500", description = "Internal Server Error - Error interno del servidor",
+                            content = @Content(schema = @Schema(hidden = true)))
+            })
+    public ResponseEntity<List<SalaComputoDto>> findByIdRfid(
+            @PathVariable String idRfid) {
+        return salaComputoService.findByIdRfid(idRfid);
+    }
+
     @GetMapping("/exists/{idCodigoU}")
     @Operation(summary = "Get if there is entrance to the Sala Cómputo",
         responses = {

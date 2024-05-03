@@ -8,6 +8,7 @@ import com.siasa.principalfailover.exception.MessageBadRequestException;
 import com.siasa.principalfailover.exception.MessageNotFoundException;
 import com.siasa.principalfailover.repository.BibliotecaRepository;
 import com.siasa.principalfailover.repository.CodigoURepository;
+import com.siasa.principalfailover.repository.RfidRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeMap;
@@ -37,11 +38,13 @@ public class BibliotecaServiceImpl implements BibliotecaService{
     private final ModelMapper modelMapper;
 
     private final CodigoURepository codigoURepository;
+    private final RfidRepository rfidRepository;
 
-    public BibliotecaServiceImpl(BibliotecaRepository bibliotecaRepository, ModelMapper modelMapper, CodigoURepository codigoURepository) {
+    public BibliotecaServiceImpl(BibliotecaRepository bibliotecaRepository, ModelMapper modelMapper, CodigoURepository codigoURepository, RfidRepository rfidRepository) {
         this.bibliotecaRepository = bibliotecaRepository;
         this.modelMapper = modelMapper;
         this.codigoURepository = codigoURepository;
+        this.rfidRepository = rfidRepository;
     }
 
     private BibliotecaDto matToDto(Biblioteca biblioteca) {
@@ -140,6 +143,23 @@ public class BibliotecaServiceImpl implements BibliotecaService{
             return ResponseEntity.ok(String.format("La persona con código %s si registra ingresos a la biblioteca", idCodigoU));
         } else {
             throw new MessageNotFoundException(String.format("La persona con código %s NO registra ingresos a la biblioteca", idCodigoU));
+        }
+    }
+
+    @Override
+    @Cacheable(value = "biblioteca-failover", key = "'findByIdRfid' + #idRfid")
+    public ResponseEntity<List<BibliotecaDto>> findByIdRdid(String idRfid) {
+        if (!rfidRepository.existsById(idRfid)) {
+            throw new MessageBadRequestException(String.format("La persona con el idRfid %s no existe en base de datos", idRfid));
+        }
+        List<Biblioteca> bibliotecas = bibliotecaRepository.findBibliotecasByCodigoURfidIdRfid(idRfid);
+        if (!bibliotecas.isEmpty()) {
+            List<BibliotecaDto> bibliotecaDtos = bibliotecas.stream()
+                    .map(this::matToDto)
+                    .collect(Collectors.toList());
+            return new ResponseEntity<>(bibliotecaDtos, HttpStatus.OK);
+        } else {
+            throw new MessageNotFoundException(String.format("NO hay registro de ingresos para el usuario con IdRfid %s", idRfid));
         }
     }
 

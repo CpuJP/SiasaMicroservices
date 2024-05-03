@@ -25,4 +25,7 @@ public interface CampusRepository extends JpaRepository<Campus, Integer>, JpaSpe
     List<Campus> findCampusByFechaIngresoBetween(LocalDateTime fechaInicial, LocalDateTime fechaFinal);
 
     List<Campus> findCampusByCodigoUIdCodigoUAndFechaIngresoBetween(String idCodigoU, LocalDateTime fechaInicial, LocalDateTime fechaFinal);
+
+    @Transactional(readOnly = false)
+    List<Campus> findCampusByCodigoURfidIdRfid(String idRfid);
 }

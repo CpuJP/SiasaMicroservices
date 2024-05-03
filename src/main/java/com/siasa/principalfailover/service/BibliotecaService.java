@@ -24,6 +24,8 @@ public interface BibliotecaService {
 
     ResponseEntity<String> existsByCodigoUIdCodigoU(@PathVariable String idCodigoU);
 
+    ResponseEntity<List<BibliotecaDto>> findByIdRdid(@PathVariable String idRfid);
+
     ResponseEntity<List<BibliotecaDto>> findByFechaIngreso(@RequestParam LocalDateTime fechaInicial,
                                                        @RequestParam LocalDateTime fechaFinal);
 
