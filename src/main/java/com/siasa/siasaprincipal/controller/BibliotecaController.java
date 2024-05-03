@@ -98,6 +98,28 @@ public class BibliotecaController {
         return bibliotecaService.findByCodigoUIdCodigoU(idCodigoU);
     }
 
+    @GetMapping("/codigou/idrfid/{idRfid}")
+    @Operation(summary = "Get all access to the Biblioteca By idRfid",
+        responses = {
+            @ApiResponse(responseCode = "200", description = "OK - Datos encontrados",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = BibliotecaDto.class))),
+            @ApiResponse(responseCode = "400", description = "Bad Request - Datos no existentes",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponseDto.class))),
+            @ApiResponse(responseCode = "404", description = "Not Found - Datos no existentes",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponseDto.class))),
+            @ApiResponse(responseCode = "500", description = "Internal Server Error - Error interno del servidor",
+                    content = @Content(schema = @Schema(hidden = true)))
+        })
+    public ResponseEntity<List<BibliotecaDto>> findByIdRfid(
+            @Parameter(name = "idRfid", description = "Id del carnet a buscar",
+                in = ParameterIn.PATH, example = "MN:0L:AA:8T", schema = @Schema(type = "string"))
+            @PathVariable String idRfid) {
+        return bibliotecaService.findByIdRdid(idRfid);
+    }
+
     @GetMapping("/exists/{idCodigoU}")
     @Operation(summary = "Get if there entrance to the Biblioteca",
         responses = {

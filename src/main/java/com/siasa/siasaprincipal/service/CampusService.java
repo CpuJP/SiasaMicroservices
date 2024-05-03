@@ -24,6 +24,8 @@ public interface CampusService {
 
     ResponseEntity<String> existsByCodigoUIdCodigoU(@PathVariable String idCodigoU);
 
+    ResponseEntity<List<CampusDto>> findByIdRfid(@PathVariable String idRfid);
+
     ResponseEntity<List<CampusDto>> findByFechaIngreso(@RequestParam LocalDateTime fechaInicial,
                                                        @RequestParam LocalDateTime fechaFinal);
 

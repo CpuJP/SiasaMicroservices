@@ -26,6 +26,8 @@ public interface SalaComputoService {
 
     ResponseEntity<String> existsByCodigoUIdCodigoU(@PathVariable String idCodigoU);
 
+    ResponseEntity<List<SalaComputoDto>> findByIdRfid(@PathVariable String idRfid);
+
     ResponseEntity<List<SalaComputoDto>> findByFechaIngreso(@RequestParam LocalDateTime fechaInicial,
                                                             @RequestParam LocalDateTime fechaFinal);
 

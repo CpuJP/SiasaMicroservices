@@ -22,7 +22,12 @@ public interface CampusRepository extends JpaRepository<Campus, Integer>, JpaSpe
     @Transactional(readOnly = false)
     void deleteAllByCodigoUIdCodigoU(String idCodigoU);
 
+    @Transactional(readOnly = false)
     List<Campus> findCampusByFechaIngresoBetween(LocalDateTime fechaInicial, LocalDateTime fechaFinal);
 
+    @Transactional(readOnly = false)
     List<Campus> findCampusByCodigoUIdCodigoUAndFechaIngresoBetween(String idCodigoU, LocalDateTime fechaInicial, LocalDateTime fechaFinal);
+
+    @Transactional(readOnly = false)
+    List<Campus> findCampusByCodigoURfidIdRfid(String idRfid);
 }

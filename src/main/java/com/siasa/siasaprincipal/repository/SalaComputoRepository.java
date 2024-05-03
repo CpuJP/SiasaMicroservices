@@ -39,4 +39,7 @@ public interface SalaComputoRepository extends JpaRepository<SalaComputo, Intege
 
     @Transactional(readOnly = true)
     List<SalaComputo> findSalaComputosByCodigoUIdCodigoUAndFechaSalidaBetween(String idCodigoU, LocalDateTime fechaInicial, LocalDateTime fechaFinal);
+
+    @Transactional(readOnly = true)
+    List<SalaComputo> findSalaComputosByCodigoURfidIdRfid(String idRfid);
 }

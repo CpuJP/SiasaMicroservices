@@ -38,4 +38,7 @@ public interface LaboratorioRepository extends JpaRepository<Laboratorio, Intege
 
     @Transactional(readOnly = true)
     List<Laboratorio> findLaboratoriosByCodigoUIdCodigoUAndFechaSalidaBetween(String idCodigoU, LocalDateTime fechaIncial, LocalDateTime fechaFinal);
+
+    @Transactional(readOnly = true)
+    List<Laboratorio> findLaboratoriosByCodigoURfidIdRfid(String idRfid);
 }

@@ -9,6 +9,7 @@ import com.siasa.siasaprincipal.exception.MessageNotContentException;
 import com.siasa.siasaprincipal.exception.MessageNotFoundException;
 import com.siasa.siasaprincipal.repository.CampusRepository;
 import com.siasa.siasaprincipal.repository.CodigoURepository;
+import com.siasa.siasaprincipal.repository.RfidRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeMap;
@@ -39,12 +40,14 @@ public class CampusServiceImpl implements CampusService{
     private final CampusRepository campusRepository;
     private final ModelMapper modelMapper;
     private final CodigoURepository codigoURepository;
+    private final RfidRepository rfidRepository;
 
 
-    public CampusServiceImpl(CampusRepository campusRepository, ModelMapper modelMapper, CodigoURepository codigoURepository) {
+    public CampusServiceImpl(CampusRepository campusRepository, ModelMapper modelMapper, CodigoURepository codigoURepository, RfidRepository rfidRepository) {
         this.campusRepository = campusRepository;
         this.modelMapper = modelMapper;
         this.codigoURepository = codigoURepository;
+        this.rfidRepository = rfidRepository;
     }
 
     private CampusDto mapToDto(Campus campus) {
@@ -146,6 +149,23 @@ public class CampusServiceImpl implements CampusService{
 
         } else {
             throw new MessageNotFoundException(String.format("La persona con código %s NO registra ingresos al campus", idCodigoU));
+        }
+    }
+
+    @Override
+    @Cacheable(value = "campus", key = "'findByIdRfid' + #idRfid")
+    public ResponseEntity<List<CampusDto>> findByIdRfid(String idRfid) {
+        if (!rfidRepository.existsById(idRfid)) {
+            throw new MessageBadRequestException(String.format("La persona co el idRfid %s no registra en base de datos", idRfid));
+        }
+        List<Campus> campus = campusRepository.findCampusByCodigoURfidIdRfid(idRfid);
+        if (!campus.isEmpty()) {
+            List<CampusDto> campusDtos = campus.stream()
+                    .map(this::mapToDto)
+                    .collect(Collectors.toList());
+            return new ResponseEntity<>(campusDtos, HttpStatus.OK);
+        } else {
+            throw new MessageNotFoundException(String.format("NO hay registro de ingresos para el usuario con IdRfid %s", idRfid));
         }
     }
 
