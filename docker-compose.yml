@@ -239,7 +239,7 @@ services:
   # REACT FRONT 
   siasa-react-front:
     container_name: siasa-react-front #Nombre del contenedor que aparece en Docker
-    image: crisfer23/siasa-react-front:2.5.1 #Imagen para cosntruir el servicio
+    image: crisfer23/siasa-react-front:2.5.2 #Imagen para cosntruir el servicio
     ports:
       - '3001:3001' #Puerto de la aplicación React
     depends_on:
