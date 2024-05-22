@@ -4,7 +4,7 @@ Repository of the "PROPOSAL FOR AN INFORMATION SYSTEM FOR THE AUTOMATION OF ACAD
 This microservice is a crucial component of the SIASA architecture, a project whose primary goal is to qualify for the title of Computer Systems Engineer.
 
 ## Architectural proposal
-![Architecture](https://github.com/CpuJP/SiasaMicroservices/blob/main/Arquitectura_SIAP.png)
+![Architecture](https://github.com/CpuJP/SiasaMicroservices/blob/main/Arquitectura_Back_SIAP.png)
 
 ## SIASA Architecture Documentation
 
