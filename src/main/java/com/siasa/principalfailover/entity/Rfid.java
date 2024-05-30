@@ -22,7 +22,7 @@ public class Rfid {
 
     public void setIdRfid(String idRfid) {
         // Validar el formato usando una expresión regular
-        String regex = "^[0-9A-Fa-f]{2}:[0-9A-Fa-f]{2}:[0-9A-Fa-f]{2}:[0-9A-Fa-f]{2}$";
+        String regex = "^([A-Fa-f0-9]{2}:){15}[A-Fa-f0-9]{2}$";
         Pattern pattern = Pattern.compile(regex);
         Matcher matcher = pattern.matcher(idRfid);
 
@@ -30,7 +30,7 @@ public class Rfid {
         if (matcher.matches()) {
             this.idRfid = idRfid;
         } else {
-            throw new IllegalArgumentException("El formato del idRfid no es válido. Debe ser XX:XX:XX:XX.");
+            throw new IllegalArgumentException("El formato del idRfid no es válido. Debe ser XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX.");
         }
     }
 }
