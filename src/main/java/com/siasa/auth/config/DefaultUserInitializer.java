@@ -57,7 +57,6 @@ public class DefaultUserInitializer implements ApplicationRunner {
 
         // Si el usuario no está presente, procede a crearlo
         Set<Role> roles = new HashSet<>();
-        roles.add(Role.USER);
         roles.add(Role.ROOT);
 
         String encodedPassword = passwordEncoder.encode(password);
