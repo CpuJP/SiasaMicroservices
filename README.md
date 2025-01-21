@@ -38,6 +38,8 @@ This architecture handles different projects:
 
 11. **[grafana](http://localhost:3000) ->** This microservice provided by a third party helps us graphically see relevant information about our architecture in different dashboards provided by the community.
 
+12. **[RFID Module](https://github.com/CpuJP/SiasaMicroservices/tree/siasa-rfid-module) ->**  This module is responsible for the communication between the Arduino Hardware and the SIASA Software.
+
 
 ## Front-End proposal
 The frontendof SIASA has been created by my colleague Cristhian Montejo, who, like me, aspires to the title of Systems Engineer. 
